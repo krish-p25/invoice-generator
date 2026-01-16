@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Mobile Invoice Scaling */
+@media (max-width: 768px) {
+  .invoice-renderer {
+    transform-origin: top left;
+    transform: scale(0.5);
+    margin-bottom: -50%;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .invoice-renderer {
+    transform-origin: top center;
+    transform: scale(0.75);
+    margin-bottom: -25%;
+  }
+}
+
+/* Print Styles */
+@media print {
+  @page {
+    margin: 0;
+    size: A4;
+  }
+
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .invoice-renderer {
+    box-shadow: none !important;
+    page-break-after: always;
+    transform: none !important;
+    margin-bottom: 0 !important;
+  }
+}
+
+/* Editable Content Styles */
+[contenteditable="true"] {
+  outline: none;
+  transition: background-color 0.2s ease;
+}
+
+[contenteditable="true"]:hover {
+  background-color: #fef9c3 !important;
+  cursor: text;
+}
+
+[contenteditable="true"]:focus {
+  background-color: #fef08a !important;
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.3);
+  border-radius: 2px;
+}
+
+/* Animations */
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation-duration: 0.3s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+.slide-in-from-right {
+  animation-name: slide-in-from-right;
+}

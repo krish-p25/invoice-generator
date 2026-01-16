@@ -1,0 +1,9 @@
+bill from,bill to,billing address,shipping address,item description,item quantity,item price,item VAT,invoice notes
+Acme Corporation,Tech Solutions Inc,"123 Business St, New York, NY 10001","456 Tech Ave, New York, NY 10002",Website Development,40,125.00,20,Thank you for your business! Payment due within 30 days.
+Acme Corporation,Tech Solutions Inc,"123 Business St, New York, NY 10001","456 Tech Ave, New York, NY 10002",Hosting Services (Annual),1,500.00,20,Thank you for your business! Payment due within 30 days.
+Acme Corporation,Tech Solutions Inc,"123 Business St, New York, NY 10001","456 Tech Ave, New York, NY 10002",SSL Certificate,1,99.00,20,Thank you for your business! Payment due within 30 days.
+Acme Corporation,Global Marketing LLC,"123 Business St, New York, NY 10001","789 Marketing Blvd, Los Angeles, CA 90001",SEO Consulting,20,150.00,20,We appreciate your partnership!
+Acme Corporation,Global Marketing LLC,"123 Business St, New York, NY 10001","789 Marketing Blvd, Los Angeles, CA 90001",Content Creation,10,200.00,20,We appreciate your partnership!
+Acme Corporation,Startup Ventures Co,"123 Business St, New York, NY 10001","321 Innovation Way, San Francisco, CA 94102",Logo Design,1,800.00,20,Great working with you!
+Acme Corporation,Startup Ventures Co,"123 Business St, New York, NY 10001","321 Innovation Way, San Francisco, CA 94102",Brand Guidelines,1,400.00,20,Great working with you!
+Acme Corporation,Startup Ventures Co,"123 Business St, New York, NY 10001","321 Innovation Way, San Francisco, CA 94102",Business Cards Design,500,2.00,20,Great working with you!
