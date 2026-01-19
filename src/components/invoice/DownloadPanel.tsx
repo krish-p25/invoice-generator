@@ -71,7 +71,7 @@ export const DownloadPanel: React.FC<DownloadPanelProps> = ({ invoice }) => {
         disabled={isDownloading}
       >
         <svg
-          className="inline-block w-4 h-4 mr-1"
+          className="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -88,7 +88,7 @@ export const DownloadPanel: React.FC<DownloadPanelProps> = ({ invoice }) => {
 
       <Button variant="outline" size="sm" onClick={handlePrint}>
         <svg
-          className="inline-block w-4 h-4 mr-1"
+          className="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -158,7 +158,7 @@ export const BulkDownloadPanel: React.FC<BulkDownloadPanelProps> = ({ invoices }
         className="sm:w-auto"
       >
         <svg
-          className="inline-block w-4 h-4 sm:w-5 sm:h-5 mr-2"
+          className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

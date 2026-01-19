@@ -15,7 +15,7 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ invoice }) => {
     <>
       <Button variant="outline" size="sm" onClick={() => setIsModalOpen(true)}>
         <svg
-          className="inline-block w-4 h-4 mr-1"
+          className="w-4 h-4 flex-shrink-0"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

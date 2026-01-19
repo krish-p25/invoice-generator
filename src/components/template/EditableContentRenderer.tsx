@@ -631,7 +631,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
             {!isEditMode && (
               <button
                 onClick={addLineItem}
-                className="mt-2 text-primary-600 hover:text-primary-800 hover:bg-primary-50 px-3 py-1 rounded text-sm font-medium border border-primary-300"
+                className="mt-2 text-primary-600 hover:text-primary-800 hover:bg-primary-50 px-3 py-1 rounded text-sm font-medium border border-primary-300 flex items-center justify-center gap-1.5 whitespace-nowrap"
               >
                 + Add Row
               </button>
@@ -724,7 +724,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                         onClick={() =>
                           updateVATType(previewInvoice.vatType === 'amount' ? 'percentage' : 'amount')
                         }
-                        className="text-xs px-2 py-0.5 rounded bg-gray-200 hover:bg-gray-300 transition-colors"
+                        className="text-xs px-2 py-0.5 rounded bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center whitespace-nowrap"
                         title="Toggle between amount and percentage"
                       >
                         {previewInvoice.vatType === 'amount' ? '$' : '%'}
@@ -781,7 +781,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                 !isEditMode && (
                   <button
                     onClick={toggleVAT}
-                    className="mt-2 text-primary-600 hover:text-primary-800 hover:bg-primary-50 px-3 py-1 rounded text-sm font-medium border border-primary-300 transition-colors"
+                    className="mt-2 text-primary-600 hover:text-primary-800 hover:bg-primary-50 px-3 py-1 rounded text-sm font-medium border border-primary-300 transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap"
                   >
                     + Add VAT
                   </button>
@@ -802,7 +802,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                         onClick={() =>
                           updateDiscountType(previewInvoice.discountType === 'amount' ? 'percentage' : 'amount')
                         }
-                        className="text-xs px-2 py-0.5 rounded bg-gray-200 hover:bg-gray-300 transition-colors"
+                        className="text-xs px-2 py-0.5 rounded bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center whitespace-nowrap"
                         title="Toggle between amount and percentage"
                       >
                         {previewInvoice.discountType === 'amount' ? '$' : '%'}
@@ -859,7 +859,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                 !isEditMode && (
                   <button
                     onClick={toggleDiscount}
-                    className="mt-2 text-primary-600 hover:text-primary-800 hover:bg-primary-50 px-3 py-1 rounded text-sm font-medium border border-primary-300 transition-colors"
+                    className="mt-2 text-primary-600 hover:text-primary-800 hover:bg-primary-50 px-3 py-1 rounded text-sm font-medium border border-primary-300 transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap"
                   >
                     + Add Discount
                   </button>
@@ -915,7 +915,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                 !isEditMode && (
                   <button
                     onClick={toggleShipping}
-                    className="mt-2 text-primary-600 hover:text-primary-800 hover:bg-primary-50 px-3 py-1 rounded text-sm font-medium border border-primary-300 transition-colors"
+                    className="mt-2 text-primary-600 hover:text-primary-800 hover:bg-primary-50 px-3 py-1 rounded text-sm font-medium border border-primary-300 transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap"
                   >
                     + Add Shipping
                   </button>

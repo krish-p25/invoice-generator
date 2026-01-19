@@ -98,9 +98,9 @@ export const CSVUploader: React.FC = () => {
       )}
 
       {isUploading && (
-        <div className="text-center text-sm text-gray-600">
-          <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600 mr-2"></div>
-          Processing CSV...
+        <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600 flex-shrink-0"></div>
+          <span>Processing CSV...</span>
         </div>
       )}
     </div>

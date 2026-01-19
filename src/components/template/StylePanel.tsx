@@ -55,7 +55,7 @@ export const StylePanel: React.FC = () => {
       <div className="pt-4 border-t border-gray-200">
         <Button variant="outline" size="sm" onClick={resetToDefault} fullWidth>
           <svg
-            className="inline-block w-4 h-4 mr-2"
+            className="w-4 h-4 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

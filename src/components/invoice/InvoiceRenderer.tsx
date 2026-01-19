@@ -15,26 +15,29 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
   return (
     <div
       id={id}
-      className="invoice-renderer bg-white p-8 shadow-lg"
+      className="invoice-renderer bg-white p-4 sm:p-6 md:p-8 shadow-lg overflow-hidden"
       style={{
         fontFamily: globalStyles.fontFamily,
         backgroundColor: globalStyles.backgroundColor,
         maxWidth: '210mm',
         minHeight: '297mm',
         margin: '0 auto',
+        width: '100%',
+        fontSize: 'clamp(10px, 2vw, 16px)',
       }}
     >
       {/* Header Section */}
-      <div className="invoice-header mb-8 relative">
-        <div className="flex justify-between items-start">
+      <div className="invoice-header mb-4 sm:mb-6 md:mb-8 relative">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
           {/* Logo */}
           {fields.logo.visible && logo.dataUrl && (
-            <div className="logo-container">
+            <div className="logo-container flex-shrink-0">
               <img
                 src={logo.dataUrl}
                 alt="Company Logo"
+                className="max-w-full h-auto"
                 style={{
-                  maxWidth: `${logo.maxWidth}px`,
+                  maxWidth: `min(${logo.maxWidth}px, 100%)`,
                   maxHeight: `${logo.maxHeight}px`,
                 }}
               />
@@ -42,12 +45,12 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
           )}
 
           {/* Invoice Number and Date */}
-          <div className="text-right">
+          <div className="text-left sm:text-right w-full sm:w-auto">
             {fields.invoiceNumber.visible && (
               <div
-                className="mb-2"
+                className="mb-1 sm:mb-2 break-words"
                 style={{
-                  fontSize: `${fields.invoiceNumber.style.fontSize}px`,
+                  fontSize: `clamp(12px, ${fields.invoiceNumber.style.fontSize * 0.8}px, ${fields.invoiceNumber.style.fontSize}px)`,
                   color: fields.invoiceNumber.style.color,
                   fontWeight: fields.invoiceNumber.style.fontWeight,
                 }}
@@ -57,8 +60,9 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
             )}
             {fields.invoiceDate.visible && (
               <div
+                className="break-words"
                 style={{
-                  fontSize: `${fields.invoiceDate.style.fontSize}px`,
+                  fontSize: `clamp(11px, ${fields.invoiceDate.style.fontSize * 0.8}px, ${fields.invoiceDate.style.fontSize}px)`,
                   color: fields.invoiceDate.style.color,
                   fontWeight: fields.invoiceDate.style.fontWeight,
                 }}
@@ -71,24 +75,25 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
       </div>
 
       {/* Bill From / Bill To Section */}
-      <div className="grid grid-cols-2 gap-8 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-4 sm:mb-6 md:mb-8">
         {/* Bill From */}
         {fields.billFrom.visible && (
           <div
+            className="break-words overflow-hidden"
             style={{
-              fontSize: `${fields.billFrom.style.fontSize}px`,
+              fontSize: `clamp(11px, ${fields.billFrom.style.fontSize * 0.8}px, ${fields.billFrom.style.fontSize}px)`,
               color: fields.billFrom.style.color,
-              padding: `${fields.billFrom.style.padding}px`,
+              padding: `${Math.max(4, fields.billFrom.style.padding * 0.7)}px`,
             }}
           >
             <h3
-              className="font-bold mb-2"
+              className="font-bold mb-1 sm:mb-2"
               style={{ color: globalStyles.primaryColor }}
             >
               From:
             </h3>
-            <div className="font-semibold">{invoice.billFrom.name}</div>
-            <div className="text-sm mt-1 whitespace-pre-line">
+            <div className="font-semibold break-words">{invoice.billFrom.name}</div>
+            <div className="text-xs sm:text-sm mt-1 whitespace-pre-line break-words">
               {invoice.billFrom.address}
             </div>
           </div>
@@ -97,20 +102,21 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
         {/* Bill To */}
         {fields.billTo.visible && (
           <div
+            className="break-words overflow-hidden"
             style={{
-              fontSize: `${fields.billTo.style.fontSize}px`,
+              fontSize: `clamp(11px, ${fields.billTo.style.fontSize * 0.8}px, ${fields.billTo.style.fontSize}px)`,
               color: fields.billTo.style.color,
-              padding: `${fields.billTo.style.padding}px`,
+              padding: `${Math.max(4, fields.billTo.style.padding * 0.7)}px`,
             }}
           >
             <h3
-              className="font-bold mb-2"
+              className="font-bold mb-1 sm:mb-2"
               style={{ color: globalStyles.primaryColor }}
             >
               Bill To:
             </h3>
-            <div className="font-semibold">{invoice.billTo.name}</div>
-            <div className="text-sm mt-1 whitespace-pre-line">
+            <div className="font-semibold break-words">{invoice.billTo.name}</div>
+            <div className="text-xs sm:text-sm mt-1 whitespace-pre-line break-words">
               {invoice.billTo.address}
             </div>
           </div>
@@ -120,20 +126,20 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
       {/* Shipping Address */}
       {fields.shippingAddress.visible && invoice.shippingAddress && (
         <div
-          className="mb-8"
+          className="mb-4 sm:mb-6 md:mb-8 break-words overflow-hidden"
           style={{
-            fontSize: `${fields.shippingAddress.style.fontSize}px`,
+            fontSize: `clamp(11px, ${fields.shippingAddress.style.fontSize * 0.8}px, ${fields.shippingAddress.style.fontSize}px)`,
             color: fields.shippingAddress.style.color,
-            padding: `${fields.shippingAddress.style.padding}px`,
+            padding: `${Math.max(4, fields.shippingAddress.style.padding * 0.7)}px`,
           }}
         >
           <h3
-            className="font-bold mb-2"
+            className="font-bold mb-1 sm:mb-2"
             style={{ color: globalStyles.primaryColor }}
           >
             Shipping Address:
           </h3>
-          <div className="text-sm whitespace-pre-line">{invoice.shippingAddress}</div>
+          <div className="text-xs sm:text-sm whitespace-pre-line break-words">{invoice.shippingAddress}</div>
         </div>
       )}
 

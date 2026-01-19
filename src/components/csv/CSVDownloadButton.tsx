@@ -10,7 +10,7 @@ export const CSVDownloadButton: React.FC = () => {
   return (
     <Button variant="primary" onClick={handleDownload}>
       <svg
-        className="inline-block w-5 h-5 mr-2"
+        className="w-5 h-5 flex-shrink-0"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
