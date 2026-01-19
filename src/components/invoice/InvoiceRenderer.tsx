@@ -6,29 +6,66 @@ import { formatCurrency, formatDate_Long } from '../../utils/formatters';
 interface InvoiceRendererProps {
   invoice: Invoice;
   id?: string;
+  disableScaling?: boolean;
 }
 
-export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id }) => {
+export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id, disableScaling = false }) => {
   const { config } = useTemplateStore();
   const { globalStyles, fields, logo } = config;
+  const [scale, setScale] = React.useState<number>(1);
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
+  // Calculate scale factor based on container width
+  React.useEffect(() => {
+    if (disableScaling) {
+      setScale(1);
+      return;
+    }
+
+    const updateScale = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        // Base canvas width is 794px (210mm at 96dpi)
+        const baseWidth = 794;
+        // Calculate scale, but don't scale up beyond 1
+        const newScale = Math.min(containerWidth / baseWidth, 1);
+        setScale(newScale);
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, [disableScaling]);
 
   return (
     <div
-      id={id}
-      className="invoice-renderer bg-white p-4 sm:p-6 md:p-8 shadow-lg overflow-hidden"
+      ref={containerRef}
+      className="invoice-renderer-container"
       style={{
-        fontFamily: globalStyles.fontFamily,
-        backgroundColor: globalStyles.backgroundColor,
-        maxWidth: '210mm',
-        minHeight: '297mm',
-        margin: '0 auto',
         width: '100%',
-        fontSize: 'clamp(10px, 2vw, 16px)',
+        maxWidth: '100%',
+        margin: '0 auto',
+        overflow: 'visible',
       }}
     >
+      <div
+        id={id}
+        className="invoice-renderer bg-white shadow-lg"
+        style={{
+          fontFamily: globalStyles.fontFamily,
+          backgroundColor: globalStyles.backgroundColor,
+          width: '794px',
+          minHeight: '1123px',
+          padding: '32px',
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          fontSize: '16px',
+        }}
+      >
       {/* Header Section */}
-      <div className="invoice-header mb-4 sm:mb-6 md:mb-8 relative">
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+      <div className="invoice-header mb-8 relative">
+        <div className="flex justify-between items-start gap-4">
           {/* Logo */}
           {fields.logo.visible && logo.dataUrl && (
             <div className="logo-container flex-shrink-0">
@@ -45,12 +82,12 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
           )}
 
           {/* Invoice Number and Date */}
-          <div className="text-left sm:text-right w-full sm:w-auto">
+          <div className="text-right">
             {fields.invoiceNumber.visible && (
               <div
-                className="mb-1 sm:mb-2 break-words"
+                className="mb-2 break-words"
                 style={{
-                  fontSize: `clamp(12px, ${fields.invoiceNumber.style.fontSize * 0.8}px, ${fields.invoiceNumber.style.fontSize}px)`,
+                  fontSize: `${fields.invoiceNumber.style.fontSize}px`,
                   color: fields.invoiceNumber.style.color,
                   fontWeight: fields.invoiceNumber.style.fontWeight,
                 }}
@@ -62,7 +99,7 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
               <div
                 className="break-words"
                 style={{
-                  fontSize: `clamp(11px, ${fields.invoiceDate.style.fontSize * 0.8}px, ${fields.invoiceDate.style.fontSize}px)`,
+                  fontSize: `${fields.invoiceDate.style.fontSize}px`,
                   color: fields.invoiceDate.style.color,
                   fontWeight: fields.invoiceDate.style.fontWeight,
                 }}
@@ -75,25 +112,25 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
       </div>
 
       {/* Bill From / Bill To Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-4 sm:mb-6 md:mb-8">
+      <div className="grid grid-cols-2 gap-8 mb-8">
         {/* Bill From */}
         {fields.billFrom.visible && (
           <div
             className="break-words overflow-hidden"
             style={{
-              fontSize: `clamp(11px, ${fields.billFrom.style.fontSize * 0.8}px, ${fields.billFrom.style.fontSize}px)`,
+              fontSize: `${fields.billFrom.style.fontSize}px`,
               color: fields.billFrom.style.color,
-              padding: `${Math.max(4, fields.billFrom.style.padding * 0.7)}px`,
+              padding: `${fields.billFrom.style.padding}px`,
             }}
           >
             <h3
-              className="font-bold mb-1 sm:mb-2"
+              className="font-bold mb-2"
               style={{ color: globalStyles.primaryColor }}
             >
               From:
             </h3>
             <div className="font-semibold break-words">{invoice.billFrom.name}</div>
-            <div className="text-xs sm:text-sm mt-1 whitespace-pre-line break-words">
+            <div className="text-sm mt-1 whitespace-pre-line break-words">
               {invoice.billFrom.address}
             </div>
           </div>
@@ -104,19 +141,19 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
           <div
             className="break-words overflow-hidden"
             style={{
-              fontSize: `clamp(11px, ${fields.billTo.style.fontSize * 0.8}px, ${fields.billTo.style.fontSize}px)`,
+              fontSize: `${fields.billTo.style.fontSize}px`,
               color: fields.billTo.style.color,
-              padding: `${Math.max(4, fields.billTo.style.padding * 0.7)}px`,
+              padding: `${fields.billTo.style.padding}px`,
             }}
           >
             <h3
-              className="font-bold mb-1 sm:mb-2"
+              className="font-bold mb-2"
               style={{ color: globalStyles.primaryColor }}
             >
               Bill To:
             </h3>
             <div className="font-semibold break-words">{invoice.billTo.name}</div>
-            <div className="text-xs sm:text-sm mt-1 whitespace-pre-line break-words">
+            <div className="text-sm mt-1 whitespace-pre-line break-words">
               {invoice.billTo.address}
             </div>
           </div>
@@ -126,40 +163,48 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
       {/* Shipping Address */}
       {fields.shippingAddress.visible && invoice.shippingAddress && (
         <div
-          className="mb-4 sm:mb-6 md:mb-8 break-words overflow-hidden"
+          className="mb-8 break-words overflow-hidden"
           style={{
-            fontSize: `clamp(11px, ${fields.shippingAddress.style.fontSize * 0.8}px, ${fields.shippingAddress.style.fontSize}px)`,
+            fontSize: `${fields.shippingAddress.style.fontSize}px`,
             color: fields.shippingAddress.style.color,
-            padding: `${Math.max(4, fields.shippingAddress.style.padding * 0.7)}px`,
+            padding: `${fields.shippingAddress.style.padding}px`,
           }}
         >
           <h3
-            className="font-bold mb-1 sm:mb-2"
+            className="font-bold mb-2"
             style={{ color: globalStyles.primaryColor }}
           >
             Shipping Address:
           </h3>
-          <div className="text-xs sm:text-sm whitespace-pre-line break-words">{invoice.shippingAddress}</div>
+          <div className="text-sm whitespace-pre-line break-words">{invoice.shippingAddress}</div>
         </div>
       )}
 
       {/* Line Items Table */}
       {fields.lineItems.visible && (
-        <div className="mb-4 sm:mb-6 md:mb-8 overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+        <div className="mb-8">
           <table
-            className="w-full border-collapse min-w-full"
+            className="w-full border-collapse"
             style={{
-              fontSize: `clamp(10px, ${fields.lineItems.style.fontSize * 0.8}px, ${fields.lineItems.style.fontSize}px)`,
+              fontSize: `${fields.lineItems.style.fontSize}px`,
               color: fields.lineItems.style.color,
               tableLayout: 'auto',
             }}
           >
             <thead>
               <tr style={{ backgroundColor: globalStyles.primaryColor, color: 'white' }}>
-                <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-left">Description</th>
-                <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap">Qty</th>
-                <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">Unit Price</th>
-                <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">Total</th>
+                <th className="border border-gray-300" style={{ padding: 0, textAlign: 'left', height: '40px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>Description</div>
+                </th>
+                <th className="border border-gray-300" style={{ padding: 0, textAlign: 'center', whiteSpace: 'nowrap', height: '40px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>Qty</div>
+                </th>
+                <th className="border border-gray-300" style={{ padding: 0, textAlign: 'right', whiteSpace: 'nowrap', height: '40px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>Unit Price</div>
+                </th>
+                <th className="border border-gray-300" style={{ padding: 0, textAlign: 'right', whiteSpace: 'nowrap', height: '40px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>Total</div>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -170,17 +215,25 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
                     backgroundColor: index % 2 === 0 ? 'white' : '#f9fafb',
                   }}
                 >
-                  <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 break-words" style={{ wordWrap: 'break-word', overflowWrap: 'break-word', wordBreak: 'break-word' }}>
-                    {item.description}
+                  <td className="border border-gray-300" style={{ padding: 0, height: '40px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', height: '100%', paddingLeft: '16px', paddingRight: '16px', wordWrap: 'break-word', overflowWrap: 'break-word', wordBreak: 'break-word' }}>
+                      {item.description}
+                    </div>
                   </td>
-                  <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap">
-                    {item.quantity}
+                  <td className="border border-gray-300" style={{ padding: 0, textAlign: 'center', whiteSpace: 'nowrap', height: '40px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>
+                      {item.quantity}
+                    </div>
                   </td>
-                  <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">
-                    {formatCurrency(item.unitPrice, invoice.currency)}
+                  <td className="border border-gray-300" style={{ padding: 0, textAlign: 'right', whiteSpace: 'nowrap', height: '40px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>
+                      {formatCurrency(item.unitPrice, invoice.currency)}
+                    </div>
                   </td>
-                  <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">
-                    {formatCurrency(item.total, invoice.currency)}
+                  <td className="border border-gray-300" style={{ padding: 0, textAlign: 'right', whiteSpace: 'nowrap', height: '40px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>
+                      {formatCurrency(item.total, invoice.currency)}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -190,24 +243,24 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
       )}
 
       {/* Totals and Notes Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+      <div className="grid grid-cols-2 gap-8">
         {/* Notes */}
         {fields.notes.visible && invoice.notes && (
           <div
             className="break-words overflow-hidden"
             style={{
-              fontSize: `clamp(10px, ${fields.notes.style.fontSize * 0.8}px, ${fields.notes.style.fontSize}px)`,
+              fontSize: `${fields.notes.style.fontSize}px`,
               color: fields.notes.style.color,
-              padding: `${Math.max(4, fields.notes.style.padding * 0.7)}px`,
+              padding: `${fields.notes.style.padding}px`,
             }}
           >
             <h3
-              className="font-bold mb-1 sm:mb-2"
+              className="font-bold mb-2"
               style={{ color: globalStyles.primaryColor }}
             >
               Notes:
             </h3>
-            <div className="text-xs sm:text-sm whitespace-pre-line break-words">{invoice.notes}</div>
+            <div className="text-sm whitespace-pre-line break-words">{invoice.notes}</div>
           </div>
         )}
 
@@ -216,12 +269,12 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
           <div
             className="break-words overflow-hidden"
             style={{
-              fontSize: `clamp(11px, ${fields.totals.style.fontSize * 0.8}px, ${fields.totals.style.fontSize}px)`,
+              fontSize: `${fields.totals.style.fontSize}px`,
               color: fields.totals.style.color,
-              padding: `${Math.max(4, fields.totals.style.padding * 0.7)}px`,
+              padding: `${fields.totals.style.padding}px`,
             }}
           >
-            <div className="space-y-1 sm:space-y-2">
+            <div className="space-y-2">
               <div className="flex justify-between gap-2">
                 <span className="flex-shrink-0">Subtotal:</span>
                 <span className="font-semibold text-right break-all">{formatCurrency(invoice.subtotal, invoice.currency)}</span>
@@ -249,12 +302,12 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
                 </div>
               )}
               <div
-                className="flex justify-between gap-2 pt-1.5 sm:pt-2 border-t-2"
+                className="flex justify-between gap-2 pt-2 border-t-2"
                 style={{ borderColor: globalStyles.primaryColor }}
               >
                 <span className="font-bold flex-shrink-0">Grand Total:</span>
                 <span
-                  className="font-bold text-base sm:text-lg text-right break-all"
+                  className="font-bold text-lg text-right break-all"
                   style={{ color: globalStyles.accentColor }}
                 >
                   {formatCurrency(invoice.grandTotal, invoice.currency)}
@@ -263,6 +316,7 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
