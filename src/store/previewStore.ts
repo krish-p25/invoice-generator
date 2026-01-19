@@ -78,7 +78,7 @@ const calculateInvoiceTotals = (
 
 export const usePreviewStore = create<PreviewInvoiceState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       previewInvoice: { ...SAMPLE_INVOICE },
 
       updateBillFrom: (name, address) =>
