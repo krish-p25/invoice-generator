@@ -15,7 +15,7 @@ const defaultFieldStyle: FieldStyle = {
 export const defaultTemplate: TemplateConfig = {
   id: 'default',
   name: 'Default Invoice Template',
-  version: 1,
+  version: 2,
   createdAt: new Date(),
   updatedAt: new Date(),
 
@@ -97,7 +97,7 @@ export const defaultTemplate: TemplateConfig = {
       type: 'lineItems',
       label: 'Line Items',
       visible: true,
-      position: { x: 40, y: 360, width: 680, height: 280, zIndex: 1 },
+      position: { x: 40, y: 360, width: 714, height: 280, zIndex: 1 },
       style: defaultFieldStyle,
     },
     totals: {
