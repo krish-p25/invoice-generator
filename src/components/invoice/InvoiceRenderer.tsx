@@ -47,6 +47,9 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id, d
         maxWidth: '100%',
         margin: '0 auto',
         overflow: 'visible',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <div
