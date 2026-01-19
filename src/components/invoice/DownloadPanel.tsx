@@ -15,7 +15,7 @@ export const DownloadPanel: React.FC<DownloadPanelProps> = ({ invoice }) => {
     setIsDownloading(true);
     try {
       const elementId = `invoice-renderer-${invoice.id}`;
-      const blob = await generateInvoicePDF(invoice, elementId);
+      const blob = await generateInvoicePDF(elementId);
       const fileName = `${invoice.invoiceNumber}_${invoice.billTo.name.replace(/[^a-z0-9]/gi, '_')}.pdf`;
       downloadPDF(blob, fileName);
     } catch (error) {
