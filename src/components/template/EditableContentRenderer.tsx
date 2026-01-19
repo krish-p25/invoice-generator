@@ -7,17 +7,21 @@ import { formatCurrency, formatDate_Long } from '../../utils/formatters';
 import { DraggableField } from './DraggableField';
 
 const MAX_LOGO_SIZE = 5 * 1024 * 1024; // 5MB
+const RemoveLogoButton: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = (props) =>
+  React.createElement('button', props);
 
 interface EditableContentRendererProps {
   isEditMode: boolean;
   selectedField: FieldType | null;
   onFieldSelect: (fieldType: FieldType) => void;
+  disableScaling?: boolean;
 }
 
 export const EditableContentRenderer: React.FC<EditableContentRendererProps> = ({
   isEditMode,
   selectedField,
   onFieldSelect,
+  disableScaling = false,
 }) => {
   const [hoveredRowId, setHoveredRowId] = React.useState<string | null>(null);
   const [isVATHovered, setIsVATHovered] = React.useState(false);
@@ -25,7 +29,9 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
   const [isShippingHovered, setIsShippingHovered] = React.useState(false);
   const [isLogoHovered, setIsLogoHovered] = React.useState(false);
   const [tableHeight, setTableHeight] = React.useState<number>(0);
+  const [scale, setScale] = React.useState<number>(1);
   const tableRef = React.useRef<HTMLDivElement>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const { config, updateFieldPosition, updateLogo } = useTemplateStore();
   const { globalStyles, fields, logo } = config;
   const {
@@ -47,6 +53,29 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
     updateShippingFee,
     toggleShipping,
   } = usePreviewStore();
+
+  // Calculate scale factor based on container width
+  React.useEffect(() => {
+    if (disableScaling) {
+      setScale(1);
+      return;
+    }
+
+    const updateScale = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        // Base canvas width is 794px (210mm at 96dpi)
+        const baseWidth = 794;
+        // Calculate scale, but don't scale up beyond 1
+        const newScale = Math.min(containerWidth / baseWidth, 1);
+        setScale(newScale);
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, [disableScaling]);
 
   // Update table height when line items change
   React.useEffect(() => {
@@ -151,17 +180,28 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
 
   return (
     <div
-      className="invoice-renderer bg-white p-4 sm:p-6 md:p-8 shadow-lg relative overflow-hidden"
+      ref={containerRef}
+      className="invoice-renderer-container"
       style={{
-        fontFamily: globalStyles.fontFamily,
-        backgroundColor: globalStyles.backgroundColor,
-        maxWidth: '210mm',
-        minHeight: '297mm',
-        margin: '0 auto',
         width: '100%',
-        fontSize: 'clamp(10px, 2vw, 16px)',
+        maxWidth: '100%',
+        margin: '0 auto',
+        overflow: 'visible',
       }}
     >
+      <div
+        className="invoice-renderer bg-white shadow-lg relative"
+        style={{
+          fontFamily: globalStyles.fontFamily,
+          backgroundColor: globalStyles.backgroundColor,
+          width: '794px',
+          minHeight: '1123px',
+          padding: '32px',
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+          fontSize: '16px',
+        }}
+      >
       {/* Logo */}
       {fields.logo.visible && (
         <DraggableField
@@ -209,7 +249,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                     )}
                     {/* Remove button on top-left */}
                     {isLogoHovered && (
-                      <button
+                      <RemoveLogoButton
                         onClick={handleRemoveLogo}
                         className="absolute -top-2 -left-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center transition-opacity duration-200 shadow-lg z-10"
                         title="Remove logo"
@@ -217,7 +257,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                      </button>
+                      </RemoveLogoButton>
                     )}
                   </>
                 )}
@@ -503,7 +543,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
             overflow: 'visible',
           }}
         >
-          <div ref={tableRef} style={{ overflowX: 'auto', overflowY: 'visible', position: 'relative' }}>
+          <div ref={tableRef} style={{ overflow: 'visible', position: 'relative' }}>
             <table
               className="w-full border-collapse min-w-full"
               style={{
@@ -945,6 +985,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
           </div>
         </DraggableField>
       )}
+      </div>
     </div>
   );
 };
