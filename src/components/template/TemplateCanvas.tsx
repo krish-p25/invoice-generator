@@ -24,7 +24,7 @@ export const TemplateCanvas: React.FC = () => {
   const [showGrid, setShowGrid] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
   const { config, updateFieldPosition } = useTemplateStore();
-  const { previewInvoice, resetToSample, updateCurrency } = usePreviewStore();
+  const { previewInvoice, resetToSample, updateCurrency, incrementInvoiceNumber } = usePreviewStore();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -90,6 +90,9 @@ export const TemplateCanvas: React.FC = () => {
       const blob = await generateInvoicePDF(previewInvoice, elementId);
       const fileName = `${previewInvoice.invoiceNumber}_${previewInvoice.billTo.name.replace(/[^a-z0-9]/gi, '_')}.pdf`;
       downloadPDF(blob, fileName);
+
+      // Automatically increment invoice number after successful download
+      incrementInvoiceNumber();
     } catch (error) {
       console.error('Failed to generate PDF:', error);
       alert('Failed to generate PDF. Please try again.');
@@ -318,6 +321,18 @@ export const TemplateCanvas: React.FC = () => {
             </div>
           </div>
         )}
+      </div>
+
+      {/* Hidden renderer for PDF generation - positioned off-screen */}
+      <div style={{ position: 'absolute', left: '-9999px', top: '0', width: '794px' }}>
+        <div id="preview-invoice-renderer">
+          <EditableContentRenderer
+            isEditMode={true}
+            selectedField={null}
+            onFieldSelect={() => {}}
+            disableScaling={true}
+          />
+        </div>
       </div>
     </div>
   );
