@@ -37,23 +37,6 @@ body {
   background: #555;
 }
 
-/* Mobile Invoice Scaling */
-@media (max-width: 768px) {
-  .invoice-renderer {
-    transform-origin: top left;
-    transform: scale(0.5);
-    margin-bottom: -50%;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .invoice-renderer {
-    transform-origin: top center;
-    transform: scale(0.75);
-    margin-bottom: -25%;
-  }
-}
-
 /* Print Styles */
 @media print {
   @page {
