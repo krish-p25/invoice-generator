@@ -102,7 +102,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
   };
 
   const handleTextEdit = (
-    e: React.FocusEvent<HTMLDivElement>,
+    e: React.FocusEvent<HTMLElement>,
     updateFn: (value: string) => void
   ) => {
     const text = e.currentTarget.textContent || '';
@@ -151,13 +151,15 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
 
   return (
     <div
-      className="invoice-renderer bg-white p-8 shadow-lg relative"
+      className="invoice-renderer bg-white p-4 sm:p-6 md:p-8 shadow-lg relative overflow-hidden"
       style={{
         fontFamily: globalStyles.fontFamily,
         backgroundColor: globalStyles.backgroundColor,
         maxWidth: '210mm',
         minHeight: '297mm',
         margin: '0 auto',
+        width: '100%',
+        fontSize: 'clamp(10px, 2vw, 16px)',
       }}
     >
       {/* Logo */}
@@ -191,8 +193,9 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                 <img
                   src={logo.dataUrl}
                   alt="Company Logo"
+                  className="max-w-full h-auto"
                   style={{
-                    maxWidth: `${logo.maxWidth}px`,
+                    maxWidth: `min(${logo.maxWidth}px, 100%)`,
                     maxHeight: `${logo.maxHeight}px`,
                   }}
                 />
@@ -207,10 +210,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                     {/* Remove button on top-left */}
                     {isLogoHovered && (
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemoveLogo();
-                        }}
+                        onClick={handleRemoveLogo}
                         className="absolute -top-2 -left-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center transition-opacity duration-200 shadow-lg z-10"
                         title="Remove logo"
                       >
@@ -281,8 +281,9 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
           }}
         >
           <div
+            className="break-words"
             style={{
-              fontSize: `${fields.invoiceNumber.style.fontSize}px`,
+              fontSize: `clamp(12px, ${fields.invoiceNumber.style.fontSize * 0.8}px, ${fields.invoiceNumber.style.fontSize}px)`,
               color: fields.invoiceNumber.style.color,
               fontWeight: fields.invoiceNumber.style.fontWeight,
               textAlign: fields.invoiceNumber.style.textAlign,
@@ -290,6 +291,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
           >
             <span className="font-bold">Invoice #:</span>{' '}
             <span
+              className="break-words"
               contentEditable={!isEditMode}
               suppressContentEditableWarning
               data-gramm="false"
@@ -319,8 +321,9 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
           }}
         >
           <div
+            className="break-words"
             style={{
-              fontSize: `${fields.invoiceDate.style.fontSize}px`,
+              fontSize: `clamp(11px, ${fields.invoiceDate.style.fontSize * 0.8}px, ${fields.invoiceDate.style.fontSize}px)`,
               color: fields.invoiceDate.style.color,
               fontWeight: fields.invoiceDate.style.fontWeight,
               textAlign: fields.invoiceDate.style.textAlign,
@@ -347,17 +350,18 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
           }}
         >
           <div
+            className="break-words overflow-hidden"
             style={{
-              fontSize: `${fields.billFrom.style.fontSize}px`,
+              fontSize: `clamp(11px, ${fields.billFrom.style.fontSize * 0.8}px, ${fields.billFrom.style.fontSize}px)`,
               color: fields.billFrom.style.color,
-              padding: `${fields.billFrom.style.padding}px`,
+              padding: `${Math.max(4, fields.billFrom.style.padding * 0.7)}px`,
             }}
           >
-            <h3 className="font-bold mb-2" style={{ color: globalStyles.primaryColor }}>
+            <h3 className="font-bold mb-1 sm:mb-2" style={{ color: globalStyles.primaryColor }}>
               From:
             </h3>
             <div
-              className="font-semibold"
+              className="font-semibold break-words"
               contentEditable={!isEditMode}
               suppressContentEditableWarning
               data-gramm="false"
@@ -370,7 +374,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
               {previewInvoice.billFrom.name}
             </div>
             <div
-              className="text-sm mt-1 whitespace-pre-line"
+              className="text-xs sm:text-sm mt-1 whitespace-pre-line break-words"
               contentEditable={!isEditMode}
               suppressContentEditableWarning
               data-gramm="false"
@@ -402,17 +406,18 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
           }}
         >
           <div
+            className="break-words overflow-hidden"
             style={{
-              fontSize: `${fields.billTo.style.fontSize}px`,
+              fontSize: `clamp(11px, ${fields.billTo.style.fontSize * 0.8}px, ${fields.billTo.style.fontSize}px)`,
               color: fields.billTo.style.color,
-              padding: `${fields.billTo.style.padding}px`,
+              padding: `${Math.max(4, fields.billTo.style.padding * 0.7)}px`,
             }}
           >
-            <h3 className="font-bold mb-2" style={{ color: globalStyles.primaryColor }}>
+            <h3 className="font-bold mb-1 sm:mb-2" style={{ color: globalStyles.primaryColor }}>
               Bill To:
             </h3>
             <div
-              className="font-semibold"
+              className="font-semibold break-words"
               contentEditable={!isEditMode}
               suppressContentEditableWarning
               data-gramm="false"
@@ -425,7 +430,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
               {previewInvoice.billTo.name}
             </div>
             <div
-              className="text-sm mt-1 whitespace-pre-line"
+              className="text-xs sm:text-sm mt-1 whitespace-pre-line break-words"
               contentEditable={!isEditMode}
               suppressContentEditableWarning
               data-gramm="false"
@@ -457,17 +462,18 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
           }}
         >
           <div
+            className="break-words overflow-hidden"
             style={{
-              fontSize: `${fields.shippingAddress.style.fontSize}px`,
+              fontSize: `clamp(11px, ${fields.shippingAddress.style.fontSize * 0.8}px, ${fields.shippingAddress.style.fontSize}px)`,
               color: fields.shippingAddress.style.color,
-              padding: `${fields.shippingAddress.style.padding}px`,
+              padding: `${Math.max(4, fields.shippingAddress.style.padding * 0.7)}px`,
             }}
           >
-            <h3 className="font-bold mb-2" style={{ color: globalStyles.primaryColor }}>
+            <h3 className="font-bold mb-1 sm:mb-2" style={{ color: globalStyles.primaryColor }}>
               Shipping Address:
             </h3>
             <div
-              className="text-sm whitespace-pre-line"
+              className="text-xs sm:text-sm whitespace-pre-line break-words"
               contentEditable={!isEditMode}
               suppressContentEditableWarning
               data-gramm="false"
@@ -497,21 +503,21 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
             overflow: 'visible',
           }}
         >
-          <div ref={tableRef} style={{ overflowX: 'visible', overflowY: 'visible', position: 'relative' }}>
+          <div ref={tableRef} style={{ overflowX: 'auto', overflowY: 'visible', position: 'relative' }}>
             <table
-              className="w-full border-collapse"
+              className="w-full border-collapse min-w-full"
               style={{
-                fontSize: `${fields.lineItems.style.fontSize}px`,
+                fontSize: `clamp(10px, ${fields.lineItems.style.fontSize * 0.8}px, ${fields.lineItems.style.fontSize}px)`,
                 color: fields.lineItems.style.color,
-                tableLayout: 'fixed',
+                tableLayout: 'auto',
               }}
             >
               <thead>
                 <tr style={{ backgroundColor: globalStyles.primaryColor, color: 'white' }}>
-                  <th className="border border-gray-300 px-4 py-2 text-left" style={{ width: '50%' }}>Description</th>
-                  <th className="border border-gray-300 px-4 py-2 text-center" style={{ width: '10%' }}>Qty</th>
-                  <th className="border border-gray-300 px-4 py-2 text-right" style={{ width: '20%' }}>Unit Price</th>
-                  <th className="border border-gray-300 px-4 py-2 text-right" style={{ width: '20%' }}>Total</th>
+                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-left">Description</th>
+                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap">Qty</th>
+                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">Unit Price</th>
+                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -525,7 +531,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                       position: 'relative',
                     }}
                   >
-                    <td className="border border-gray-300 px-4 py-2" style={{ width: '50%', maxWidth: '50%', minWidth: '50%' }}>
+                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 break-words">
                       <div
                         contentEditable={!isEditMode}
                         suppressContentEditableWarning
@@ -548,7 +554,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                         {item.description}
                       </div>
                     </td>
-                    <td className="border border-gray-300 px-4 py-2 text-center" style={{ width: '10%', maxWidth: '10%', minWidth: '10%' }}>
+                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap">
                       <div
                         contentEditable={!isEditMode}
                         suppressContentEditableWarning
@@ -570,7 +576,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                         {item.quantity}
                       </div>
                     </td>
-                    <td className="border border-gray-300 px-4 py-2 text-right" style={{ width: '20%', maxWidth: '20%', minWidth: '20%' }}>
+                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">
                       <div
                         contentEditable={!isEditMode}
                         suppressContentEditableWarning
@@ -592,7 +598,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                         {formatCurrency(item.unitPrice, previewInvoice.currency)}
                       </div>
                     </td>
-                    <td className="border border-gray-300 px-4 py-2 text-right" style={{ width: '20%', maxWidth: '20%', minWidth: '20%' }}>
+                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">
                       {formatCurrency(item.total, previewInvoice.currency)}
                     </td>
                     {/* Delete button that appears on hover */}
@@ -657,17 +663,18 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
           }}
         >
           <div
+            className="break-words overflow-hidden"
             style={{
-              fontSize: `${fields.notes.style.fontSize}px`,
+              fontSize: `clamp(10px, ${fields.notes.style.fontSize * 0.8}px, ${fields.notes.style.fontSize}px)`,
               color: fields.notes.style.color,
-              padding: `${fields.notes.style.padding}px`,
+              padding: `${Math.max(4, fields.notes.style.padding * 0.7)}px`,
             }}
           >
-            <h3 className="font-bold mb-2" style={{ color: globalStyles.primaryColor }}>
+            <h3 className="font-bold mb-1 sm:mb-2" style={{ color: globalStyles.primaryColor }}>
               Notes:
             </h3>
             <div
-              className="text-sm whitespace-pre-line"
+              className="text-xs sm:text-sm whitespace-pre-line break-words"
               contentEditable={!isEditMode}
               suppressContentEditableWarning
               data-gramm="false"
@@ -699,9 +706,9 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
         >
           <div
             style={{
-              fontSize: `${fields.totals.style.fontSize}px`,
+              fontSize: `clamp(11px, ${fields.totals.style.fontSize * 0.8}px, ${fields.totals.style.fontSize}px)`,
               color: fields.totals.style.color,
-              padding: `${fields.totals.style.padding}px`,
+              padding: `${Math.max(4, fields.totals.style.padding * 0.7)}px`,
             }}
           >
             <div className="space-y-2">
