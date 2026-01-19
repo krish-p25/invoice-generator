@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
-import { CSVRow, Invoice, LineItem } from '../types';
+import { CSVRow, Invoice } from '../types';
 import { format } from 'date-fns';
 
 export function groupCSVRowsToInvoices(rows: CSVRow[]): Invoice[] {
   const invoiceMap = new Map<string, Invoice>();
   const customerVATMap = new Map<string, number>(); // Track VAT rate per customer
 
-  rows.forEach((row, index) => {
+  rows.forEach((row) => {
     const customerKey = row.billTo.trim().toLowerCase();
     const vatRate = parseFloat(String(row.itemVAT)) || 0;
 
@@ -33,10 +33,18 @@ export function groupCSVRowsToInvoices(rows: CSVRow[]): Invoice[] {
         shippingAddress: row.shippingAddress,
         lineItems: [],
         notes: row.invoiceNotes,
+        currency: 'USD',
         subtotal: 0,
+        showVAT: vatRate > 0,
         vatType: 'percentage',
         vatValue: vatRate,
         totalVat: 0,
+        showDiscount: false,
+        discountType: 'percentage',
+        discountValue: 0,
+        totalDiscount: 0,
+        showShipping: false,
+        shippingFee: 0,
         grandTotal: 0,
       });
     }
