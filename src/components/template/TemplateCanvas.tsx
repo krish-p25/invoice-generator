@@ -2,15 +2,12 @@ import React, { useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
-  DragMoveEvent,
   useSensor,
   useSensors,
   PointerSensor,
   TouchSensor,
-  DragOverlay,
 } from '@dnd-kit/core';
 import { EditableContentRenderer } from './EditableContentRenderer';
-import { InvoiceRenderer } from '../invoice/InvoiceRenderer';
 import { Button } from '../common/Button';
 import { FieldType } from '../../types';
 import { useTemplateStore } from '../../store/templateStore';
@@ -66,7 +63,7 @@ export const TemplateCanvas: React.FC = () => {
     console.log(`Moved ${fieldType} by (${delta.x}, ${delta.y}) to (${newX}, ${newY})`);
   };
 
-  const handleDragMove = (event: DragMoveEvent) => {
+  const handleDragMove = () => {
     // Real-time position feedback during drag
   };
 
@@ -87,7 +84,7 @@ export const TemplateCanvas: React.FC = () => {
     setIsDownloading(true);
     try {
       const elementId = `preview-invoice-renderer`;
-      const blob = await generateInvoicePDF(previewInvoice, elementId);
+      const blob = await generateInvoicePDF(elementId);
       const fileName = `${previewInvoice.invoiceNumber}_${previewInvoice.billTo.name.replace(/[^a-z0-9]/gi, '_')}.pdf`;
       downloadPDF(blob, fileName);
 
