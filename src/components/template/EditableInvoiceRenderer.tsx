@@ -252,7 +252,7 @@ export const EditableInvoiceRenderer: React.FC<EditableInvoiceRendererProps> = (
                       {formatCurrency(item.unitPrice)}
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-right">
-                      {item.vatRate}%
+                      {invoice.vatType === 'percentage' ? invoice.vatValue : 0}%
                     </td>
                     <td className="border border-gray-300 px-4 py-2 text-right">
                       {formatCurrency(item.total)}
