@@ -135,7 +135,7 @@ export const useTemplateStore = create<TemplateState>()(
     {
       name: 'invoice-template-config',
       version: 2,
-      migrate: (persistedState: any, version: number) => {
+      migrate: (persistedState: any) => {
         // Migrate old table width (680) to new centered width (714)
         if (persistedState?.config?.fields?.lineItems?.position?.width === 680) {
           persistedState.config.fields.lineItems.position.width = 714;
