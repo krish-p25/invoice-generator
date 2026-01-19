@@ -10,6 +10,7 @@ interface PreviewInvoiceState {
   updateBillTo: (name: string, address: string) => void;
   updateShippingAddress: (address: string) => void;
   updateInvoiceNumber: (number: string) => void;
+  incrementInvoiceNumber: () => void;
   updateInvoiceDate: (date: Date) => void;
   updateNotes: (notes: string) => void;
   updateCurrency: (currency: string) => void;
@@ -111,6 +112,38 @@ export const usePreviewStore = create<PreviewInvoiceState>()(
             invoiceNumber: number,
           },
         })),
+
+      incrementInvoiceNumber: () =>
+        set((state) => {
+          const currentNumber = state.previewInvoice.invoiceNumber;
+
+          // Try to find the last sequence of digits in the invoice number
+          const match = currentNumber.match(/^(.*?)(\d+)([^\d]*)$/);
+
+          if (match) {
+            // Found digits - increment them
+            const prefix = match[1]; // Everything before the number
+            const number = match[2]; // The number part
+            const suffix = match[3]; // Everything after the number
+            const incrementedNumber = (parseInt(number, 10) + 1).toString().padStart(number.length, '0');
+            const newInvoiceNumber = `${prefix}${incrementedNumber}${suffix}`;
+
+            return {
+              previewInvoice: {
+                ...state.previewInvoice,
+                invoiceNumber: newInvoiceNumber,
+              },
+            };
+          } else {
+            // No digits found - append "-001"
+            return {
+              previewInvoice: {
+                ...state.previewInvoice,
+                invoiceNumber: `${currentNumber}-001`,
+              },
+            };
+          }
+        }),
 
       updateInvoiceDate: (date) =>
         set((state) => ({
