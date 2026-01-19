@@ -145,21 +145,21 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
 
       {/* Line Items Table */}
       {fields.lineItems.visible && (
-        <div className="mb-8 overflow-x-auto">
+        <div className="mb-4 sm:mb-6 md:mb-8 overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
           <table
-            className="w-full border-collapse"
+            className="w-full border-collapse min-w-full"
             style={{
-              fontSize: `${fields.lineItems.style.fontSize}px`,
+              fontSize: `clamp(10px, ${fields.lineItems.style.fontSize * 0.8}px, ${fields.lineItems.style.fontSize}px)`,
               color: fields.lineItems.style.color,
-              tableLayout: 'fixed',
+              tableLayout: 'auto',
             }}
           >
             <thead>
               <tr style={{ backgroundColor: globalStyles.primaryColor, color: 'white' }}>
-                <th className="border border-gray-300 px-4 py-2 text-left" style={{ width: '50%' }}>Description</th>
-                <th className="border border-gray-300 px-4 py-2 text-center" style={{ width: '10%' }}>Qty</th>
-                <th className="border border-gray-300 px-4 py-2 text-right" style={{ width: '20%' }}>Unit Price</th>
-                <th className="border border-gray-300 px-4 py-2 text-right" style={{ width: '20%' }}>Total</th>
+                <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-left">Description</th>
+                <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap">Qty</th>
+                <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">Unit Price</th>
+                <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -170,16 +170,16 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
                     backgroundColor: index % 2 === 0 ? 'white' : '#f9fafb',
                   }}
                 >
-                  <td className="border border-gray-300 px-4 py-2" style={{ wordWrap: 'break-word', overflowWrap: 'break-word', wordBreak: 'break-word' }}>
+                  <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 break-words" style={{ wordWrap: 'break-word', overflowWrap: 'break-word', wordBreak: 'break-word' }}>
                     {item.description}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
+                  <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap">
                     {item.quantity}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 text-right">
+                  <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">
                     {formatCurrency(item.unitPrice, invoice.currency)}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2 text-right">
+                  <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">
                     {formatCurrency(item.total, invoice.currency)}
                   </td>
                 </tr>
@@ -190,69 +190,71 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id })
       )}
 
       {/* Totals and Notes Section */}
-      <div className="grid grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
         {/* Notes */}
         {fields.notes.visible && invoice.notes && (
           <div
+            className="break-words overflow-hidden"
             style={{
-              fontSize: `${fields.notes.style.fontSize}px`,
+              fontSize: `clamp(10px, ${fields.notes.style.fontSize * 0.8}px, ${fields.notes.style.fontSize}px)`,
               color: fields.notes.style.color,
-              padding: `${fields.notes.style.padding}px`,
+              padding: `${Math.max(4, fields.notes.style.padding * 0.7)}px`,
             }}
           >
             <h3
-              className="font-bold mb-2"
+              className="font-bold mb-1 sm:mb-2"
               style={{ color: globalStyles.primaryColor }}
             >
               Notes:
             </h3>
-            <div className="text-sm whitespace-pre-line">{invoice.notes}</div>
+            <div className="text-xs sm:text-sm whitespace-pre-line break-words">{invoice.notes}</div>
           </div>
         )}
 
         {/* Totals */}
         {fields.totals.visible && (
           <div
+            className="break-words overflow-hidden"
             style={{
-              fontSize: `${fields.totals.style.fontSize}px`,
+              fontSize: `clamp(11px, ${fields.totals.style.fontSize * 0.8}px, ${fields.totals.style.fontSize}px)`,
               color: fields.totals.style.color,
-              padding: `${fields.totals.style.padding}px`,
+              padding: `${Math.max(4, fields.totals.style.padding * 0.7)}px`,
             }}
           >
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span>Subtotal:</span>
-                <span className="font-semibold">{formatCurrency(invoice.subtotal, invoice.currency)}</span>
+            <div className="space-y-1 sm:space-y-2">
+              <div className="flex justify-between gap-2">
+                <span className="flex-shrink-0">Subtotal:</span>
+                <span className="font-semibold text-right break-all">{formatCurrency(invoice.subtotal, invoice.currency)}</span>
               </div>
               {invoice.showVAT && (
-                <div className="flex justify-between">
-                  <span>
+                <div className="flex justify-between gap-2">
+                  <span className="flex-shrink-0">
                     VAT {invoice.vatType === 'percentage' ? `(${invoice.vatValue}%)` : ''}:
                   </span>
-                  <span className="font-semibold">{formatCurrency(invoice.totalVat, invoice.currency)}</span>
+                  <span className="font-semibold text-right break-all">{formatCurrency(invoice.totalVat, invoice.currency)}</span>
                 </div>
               )}
               {invoice.showDiscount && (
-                <div className="flex justify-between">
-                  <span>
+                <div className="flex justify-between gap-2">
+                  <span className="flex-shrink-0">
                     Discount {invoice.discountType === 'percentage' ? `(${invoice.discountValue}%)` : ''}:
                   </span>
-                  <span className="font-semibold">-{formatCurrency(invoice.totalDiscount, invoice.currency)}</span>
+                  <span className="font-semibold text-right break-all">-{formatCurrency(invoice.totalDiscount, invoice.currency)}</span>
                 </div>
               )}
               {invoice.showShipping && (
-                <div className="flex justify-between">
-                  <span>Shipping:</span>
-                  <span className="font-semibold">{formatCurrency(invoice.shippingFee, invoice.currency)}</span>
+                <div className="flex justify-between gap-2">
+                  <span className="flex-shrink-0">Shipping:</span>
+                  <span className="font-semibold text-right break-all">{formatCurrency(invoice.shippingFee, invoice.currency)}</span>
                 </div>
               )}
               <div
-                className="flex justify-between pt-2 border-t-2"
+                className="flex justify-between gap-2 pt-1.5 sm:pt-2 border-t-2"
                 style={{ borderColor: globalStyles.primaryColor }}
               >
-                <span className="font-bold">Grand Total:</span>
+                <span className="font-bold flex-shrink-0">Grand Total:</span>
                 <span
-                  className="font-bold text-lg"
+                  className="font-bold text-base sm:text-lg text-right break-all"
                   style={{ color: globalStyles.accentColor }}
                 >
                   {formatCurrency(invoice.grandTotal, invoice.currency)}
