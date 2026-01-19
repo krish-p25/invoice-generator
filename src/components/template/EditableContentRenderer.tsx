@@ -40,6 +40,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
     updateBillTo,
     updateShippingAddress,
     updateInvoiceNumber,
+    updateInvoiceDate,
     updateNotes,
     updateLineItem,
     addLineItem,
@@ -138,6 +139,24 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
     updateFn(text);
   };
 
+  const handleDateEdit = (e: React.FocusEvent<HTMLElement>) => {
+    const text = e.currentTarget.textContent || '';
+    try {
+      // Try to parse the date
+      const parsedDate = new Date(text);
+      // Check if it's a valid date
+      if (!isNaN(parsedDate.getTime())) {
+        updateInvoiceDate(parsedDate);
+      } else {
+        // If invalid, revert to current date
+        e.currentTarget.textContent = formatDate_Long(previewInvoice.date);
+      }
+    } catch (error) {
+      // If parsing fails, revert to current date
+      e.currentTarget.textContent = formatDate_Long(previewInvoice.date);
+    }
+  };
+
   // Logo upload handler
   const onDropLogo = React.useCallback(
     (acceptedFiles: File[]) => {
@@ -187,6 +206,9 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
         maxWidth: '100%',
         margin: '0 auto',
         overflow: 'visible',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <div
@@ -369,7 +391,18 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
               textAlign: fields.invoiceDate.style.textAlign,
             }}
           >
-            <span className="font-bold">Date:</span> {formatDate_Long(previewInvoice.date)}
+            <span className="font-bold">Date:</span>{' '}
+            <span
+              className="break-words"
+              contentEditable={!isEditMode}
+              suppressContentEditableWarning
+              data-gramm="false"
+              data-gramm_editor="false"
+              data-enable-grammarly="false"
+              onBlur={handleDateEdit}
+            >
+              {formatDate_Long(previewInvoice.date)}
+            </span>
           </div>
         </DraggableField>
       )}
