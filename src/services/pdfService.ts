@@ -1,11 +1,8 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { Invoice, TemplateConfig } from '../types';
+import { Invoice } from '../types';
 
-export async function generateInvoicePDF(
-  invoice: Invoice,
-  elementId: string
-): Promise<Blob> {
+export async function generateInvoicePDF(elementId: string): Promise<Blob> {
   const element = document.getElementById(elementId);
   if (!element) throw new Error('Invoice element not found');
 
@@ -49,7 +46,7 @@ export async function generateBulkPDFs(
     const elementId = `invoice-renderer-${invoice.id}`;
 
     try {
-      const blob = await generateInvoicePDF(invoice, elementId);
+      const blob = await generateInvoicePDF(elementId);
       const fileName = `${invoice.invoiceNumber}_${invoice.billTo.name.replace(/[^a-z0-9]/gi, '_')}.pdf`;
       results.set(fileName, blob);
       onProgress?.(i + 1, invoices.length);
