@@ -11,12 +11,15 @@ function App() {
   const { groupedInvoices, errors } = useInvoiceStore();
 
   return (
-    <MainLayout topBanner={<QuickStartGuide />}>
+    <MainLayout>
       <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
         {/* Template Customizer */}
         <section>
           <TemplateCustomizer />
         </section>
+
+        {/* Quick Start Guide */}
+        <QuickStartGuide />
 
         {/* CSV Upload Section */}
         <section className="bg-white rounded-lg shadow-md p-4 sm:p-6">

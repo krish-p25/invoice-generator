@@ -7,7 +7,7 @@ export const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Free Invoice Generator - No Sign Up Required</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Free Invoice Generator</h1>
             <p className="text-sm text-gray-600 mt-1">
               Create professional invoices instantly. Customize templates, add your logo, export to PDF. Perfect for freelancers and small businesses.
             </p>

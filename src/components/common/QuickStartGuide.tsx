@@ -83,7 +83,7 @@ export const QuickStartGuide: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-primary-50 to-primary-100 border-b-2 border-primary-200 py-6 sm:py-8">
+    <div className="bg-gradient-to-r from-primary-50 to-primary-100 border-2 border-primary-200 py-6 sm:py-8 rounded-xl shadow-md px-4">
       <div className="container mx-auto px-3 sm:px-4">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center mb-6">
           How to Create Professional Invoices in 3 Easy Steps
@@ -94,7 +94,7 @@ export const QuickStartGuide: React.FC = () => {
             return (
               <div
                 key={step.number}
-                className={`${colors.bg} ${colors.border} border-2 rounded-lg p-4 sm:p-6 transition-transform hover:scale-105 hover:shadow-lg relative`}
+                className={`${colors.bg} ${colors.border} border-2 rounded-lg p-4 sm:p-6 relative`}
               >
                 <div className="flex items-start gap-4">
                   {/* Step Number Badge */}

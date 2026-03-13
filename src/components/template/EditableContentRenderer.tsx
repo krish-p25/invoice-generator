@@ -30,8 +30,10 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
   const [isLogoHovered, setIsLogoHovered] = React.useState(false);
   const [tableHeight, setTableHeight] = React.useState<number>(0);
   const [scale, setScale] = React.useState<number>(1);
+  const [invoiceHeight, setInvoiceHeight] = React.useState<number>(1123);
   const tableRef = React.useRef<HTMLDivElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const invoiceRef = React.useRef<HTMLDivElement>(null);
   const { config, updateFieldPosition, updateLogo } = useTemplateStore();
   const { globalStyles, fields, logo } = config;
   const {
@@ -99,6 +101,18 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
 
     return () => clearTimeout(timeout);
   }, [isEditMode]);
+
+  // Track the invoice renderer's actual (unscaled) height
+  React.useEffect(() => {
+    if (!invoiceRef.current) return;
+    const ro = new ResizeObserver(() => {
+      if (invoiceRef.current) {
+        setInvoiceHeight(invoiceRef.current.scrollHeight);
+      }
+    });
+    ro.observe(invoiceRef.current);
+    return () => ro.disconnect();
+  }, []);
 
   // Calculate safe position - only push down if there would be overlap
   const calculateSafePosition = (
@@ -205,17 +219,25 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
         width: '100%',
         maxWidth: '100%',
         margin: '0 auto',
-        overflow: 'visible',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
       }}
     >
       <div
-        className="invoice-renderer bg-white shadow-lg relative"
+        className="invoice-background shadow-lg"
+        style={{
+          width: '100%',
+          height: `${invoiceHeight * scale}px`,
+          backgroundColor: globalStyles.backgroundColor,
+          overflow: 'hidden',
+          maxWidth: '794px',
+        }}
+      >
+      <div
+        ref={invoiceRef}
+        className="invoice-renderer relative"
         style={{
           fontFamily: globalStyles.fontFamily,
-          backgroundColor: globalStyles.backgroundColor,
           width: '794px',
           minHeight: '1123px',
           padding: '32px',
@@ -1018,6 +1040,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
           </div>
         </DraggableField>
       )}
+      </div>
       </div>
     </div>
   );
