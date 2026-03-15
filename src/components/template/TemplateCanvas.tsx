@@ -199,15 +199,14 @@ export const TemplateCanvas: React.FC = () => {
   return (
     <div className="space-y-3 sm:space-y-4">
       {/* Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200 gap-3">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+      <div className="bg-gray-50 p-3 sm:p-4 rounded-lg border border-gray-200 space-y-3">
+        {/* Row 1: title + currency */}
+        <div className="flex items-center justify-between gap-2">
           <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Template Preview</h3>
-        </div>
-        <div className="flex items-center gap-2 flex-wrap">
           <select
             value={previewInvoice.currency}
             onChange={(e) => updateCurrency(e.target.value)}
-            className="px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm border border-gray-300 rounded-md bg-white hover:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+            className="px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm border border-gray-300 rounded-md bg-white hover:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors max-w-[140px] sm:max-w-none"
           >
             {CURRENCIES.map((currency) => (
               <option key={currency.code} value={currency.code}>
@@ -215,42 +214,43 @@ export const TemplateCanvas: React.FC = () => {
               </option>
             ))}
           </select>
+        </div>
 
+        {/* Row 2: action buttons */}
+        <div className="flex items-center gap-2 flex-wrap">
           {!isEditMode && (
-            <Button variant="outline" size="sm" onClick={resetToSample}>
+            <Button variant="outline" size="sm" onClick={resetToSample} className="flex-1 sm:flex-none justify-center">
               <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              <span className="hidden sm:inline">Reset</span>
+              <span>Reset</span>
             </Button>
           )}
 
-          <Button variant={isEditMode ? 'success' : 'primary'} size="sm" onClick={toggleEditMode}>
+          <Button variant={isEditMode ? 'success' : 'primary'} size="sm" onClick={toggleEditMode} className="flex-1 sm:flex-none justify-center">
             {isEditMode ? (
               <>
                 <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                <span className="hidden sm:inline">Done Editing</span>
-                <span className="sm:hidden">Done</span>
+                <span>Done Editing</span>
               </>
             ) : (
               <>
                 <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
-                <span className="hidden sm:inline">Edit Layout</span>
-                <span className="sm:hidden">Edit</span>
+                <span>Edit Layout</span>
               </>
             )}
           </Button>
 
           {!isEditMode && (
-            <Button variant="primary" size="sm" onClick={handleDownloadInvoice} loading={isDownloading} disabled={isDownloading}>
+            <Button variant="primary" size="sm" onClick={handleDownloadInvoice} loading={isDownloading} disabled={isDownloading} className="flex-1 sm:flex-none justify-center">
               <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span className="hidden sm:inline">Download</span>
+              <span>Download</span>
             </Button>
           )}
         </div>
