@@ -134,11 +134,19 @@ export const useTemplateStore = create<TemplateState>()(
     }),
     {
       name: 'invoice-template-config',
-      version: 2,
+      version: 3,
       migrate: (persistedState: any) => {
         // Migrate old table width (680) to new centered width (714)
         if (persistedState?.config?.fields?.lineItems?.position?.width === 680) {
           persistedState.config.fields.lineItems.position.width = 714;
+        }
+        // Add invoiceDueDate field if missing
+        if (!persistedState?.config?.fields?.invoiceDueDate) {
+          persistedState.config.fields.invoiceDueDate = defaultTemplate.fields.invoiceDueDate;
+          persistedState.config.layout.headerFields = [
+            ...persistedState.config.layout.headerFields.filter((f: string) => f !== 'invoiceDueDate'),
+            'invoiceDueDate',
+          ];
         }
         return persistedState;
       },
