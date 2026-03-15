@@ -1,11 +1,12 @@
 import React from 'react';
+import { CSVDownloadButton } from '../csv/CSVDownloadButton';
 
 export const QuickStartGuide: React.FC = () => {
   const steps = [
     {
       number: 1,
-      title: 'Download CSV Template',
-      description: 'Get the template and fill in your invoice details',
+      title: 'Download the CSV Template',
+      description: 'Click "Download CSV Template" to get a pre-formatted spreadsheet. Open it in Excel, Google Sheets, or any spreadsheet app — each row represents one line item. Fill in your company name, customer details, item descriptions, quantities, and prices. You can add multiple rows for the same customer to bundle them into a single invoice.',
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -20,24 +21,8 @@ export const QuickStartGuide: React.FC = () => {
     },
     {
       number: 2,
-      title: 'Edit Invoice Template',
-      description: 'Customize colors, fonts, logo, and layout to your liking',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-          />
-        </svg>
-      ),
-      color: 'purple',
-    },
-    {
-      number: 3,
-      title: 'Upload & Generate',
-      description: 'Upload your CSV and instantly generate professional invoices',
+      title: 'Upload Your CSV',
+      description: 'Once your spreadsheet is filled in, save it as a CSV file and drag it into the upload area (or click to browse). The tool will instantly parse your data and group rows by customer — every unique customer gets their own invoice automatically, with all their line items combined.',
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -45,6 +30,22 @@ export const QuickStartGuide: React.FC = () => {
             strokeLinejoin="round"
             strokeWidth={2}
             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+          />
+        </svg>
+      ),
+      color: 'purple',
+    },
+    {
+      number: 3,
+      title: 'Download All Invoices',
+      description: 'Your invoices appear as cards below — preview each one or download them individually. Use the "Download All as ZIP" button to export every invoice as a PDF in one click, ready to send to your customers.',
+      icon: (
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8M10 12v4m4-4v4"
           />
         </svg>
       ),
@@ -85,9 +86,14 @@ export const QuickStartGuide: React.FC = () => {
   return (
     <div className="bg-gradient-to-r from-primary-50 to-primary-100 border-2 border-primary-200 py-6 sm:py-8 rounded-xl shadow-md px-4">
       <div className="container mx-auto px-3 sm:px-4">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 text-center mb-6">
-          How to Create Professional Invoices in 3 Easy Steps
-        </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+            How to Generate Bulk Invoices in 3 Easy Steps
+          </h2>
+          <div className="flex-shrink-0">
+            <CSVDownloadButton />
+          </div>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
           {steps.map((step) => {
             const colors = getColorClasses(step.color);
