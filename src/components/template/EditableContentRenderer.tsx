@@ -5,16 +5,23 @@ import { useTemplateStore } from '../../store/templateStore';
 import { usePreviewStore } from '../../store/previewStore';
 import { formatCurrency, formatDate_Long } from '../../utils/formatters';
 import { DraggableField } from './DraggableField';
+import { DatePicker } from '../common/DatePicker';
 
 const MAX_LOGO_SIZE = 5 * 1024 * 1024; // 5MB
 const RemoveLogoButton: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = (props) =>
   React.createElement('button', props);
+
+interface SnapGuides {
+  x: number[];
+  y: number[];
+}
 
 interface EditableContentRendererProps {
   isEditMode: boolean;
   selectedField: FieldType | null;
   onFieldSelect: (fieldType: FieldType) => void;
   disableScaling?: boolean;
+  snapGuides?: SnapGuides;
 }
 
 export const EditableContentRenderer: React.FC<EditableContentRendererProps> = ({
@@ -22,12 +29,15 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
   selectedField,
   onFieldSelect,
   disableScaling = false,
+  snapGuides,
 }) => {
   const [hoveredRowId, setHoveredRowId] = React.useState<string | null>(null);
   const [isVATHovered, setIsVATHovered] = React.useState(false);
   const [isDiscountHovered, setIsDiscountHovered] = React.useState(false);
   const [isShippingHovered, setIsShippingHovered] = React.useState(false);
   const [isLogoHovered, setIsLogoHovered] = React.useState(false);
+  const [datePickerAnchor, setDatePickerAnchor] = React.useState<DOMRect | null>(null);
+  const [dueDatePickerAnchor, setDueDatePickerAnchor] = React.useState<DOMRect | null>(null);
   const [tableHeight, setTableHeight] = React.useState<number>(0);
   const [scale, setScale] = React.useState<number>(1);
   const [invoiceHeight, setInvoiceHeight] = React.useState<number>(1123);
@@ -43,6 +53,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
     updateShippingAddress,
     updateInvoiceNumber,
     updateInvoiceDate,
+    updateInvoiceDueDate,
     updateNotes,
     updateLineItem,
     addLineItem,
@@ -153,21 +164,15 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
     updateFn(text);
   };
 
-  const handleDateEdit = (e: React.FocusEvent<HTMLElement>) => {
-    const text = e.currentTarget.textContent || '';
-    try {
-      // Try to parse the date
-      const parsedDate = new Date(text);
-      // Check if it's a valid date
-      if (!isNaN(parsedDate.getTime())) {
-        updateInvoiceDate(parsedDate);
-      } else {
-        // If invalid, revert to current date
-        e.currentTarget.textContent = formatDate_Long(previewInvoice.date);
-      }
-    } catch (error) {
-      // If parsing fails, revert to current date
-      e.currentTarget.textContent = formatDate_Long(previewInvoice.date);
+  const handleDateClick = (e: React.MouseEvent<HTMLSpanElement>) => {
+    if (!isEditMode) {
+      setDatePickerAnchor(e.currentTarget.getBoundingClientRect());
+    }
+  };
+
+  const handleDueDateClick = (e: React.MouseEvent<HTMLSpanElement>) => {
+    if (!isEditMode) {
+      setDueDatePickerAnchor(e.currentTarget.getBoundingClientRect());
     }
   };
 
@@ -246,6 +251,68 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
           fontSize: '16px',
         }}
       >
+      {/* Snap alignment guides */}
+      {snapGuides && (
+        <>
+          {snapGuides.x.map((x) => (
+            <div
+              key={`snap-x-${x}`}
+              style={{
+                position: 'absolute',
+                left: `${x}px`,
+                top: 0,
+                width: '1px',
+                height: '100%',
+                background: 'rgba(37, 99, 235, 0.75)',
+                pointerEvents: 'none',
+                zIndex: 9999,
+                boxShadow: '0 0 3px rgba(37, 99, 235, 0.4)',
+              }}
+            >
+              {/* Diamond indicator */}
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%) rotate(45deg)',
+                width: 7,
+                height: 7,
+                background: '#2563eb',
+                borderRadius: 1,
+              }} />
+            </div>
+          ))}
+          {snapGuides.y.map((y) => (
+            <div
+              key={`snap-y-${y}`}
+              style={{
+                position: 'absolute',
+                top: `${y}px`,
+                left: 0,
+                height: '1px',
+                width: '100%',
+                background: 'rgba(37, 99, 235, 0.75)',
+                pointerEvents: 'none',
+                zIndex: 9999,
+                boxShadow: '0 0 3px rgba(37, 99, 235, 0.4)',
+              }}
+            >
+              {/* Diamond indicator */}
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%) rotate(45deg)',
+                width: 7,
+                height: 7,
+                background: '#2563eb',
+                borderRadius: 1,
+              }} />
+            </div>
+          ))}
+        </>
+      )}
+
       {/* Logo */}
       {fields.logo.visible && (
         <DraggableField
@@ -367,7 +434,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
           <div
             className="break-words"
             style={{
-              fontSize: `clamp(12px, ${fields.invoiceNumber.style.fontSize * 0.8}px, ${fields.invoiceNumber.style.fontSize}px)`,
+              fontSize: `clamp(11px, ${fields.invoiceDate.style.fontSize * 0.8}px, ${fields.invoiceDate.style.fontSize}px)`,
               color: fields.invoiceNumber.style.color,
               fontWeight: fields.invoiceNumber.style.fontWeight,
               textAlign: fields.invoiceNumber.style.textAlign,
@@ -416,15 +483,107 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
             <span className="font-bold">Date:</span>{' '}
             <span
               className="break-words"
-              contentEditable={!isEditMode}
-              suppressContentEditableWarning
-              data-gramm="false"
-              data-gramm_editor="false"
-              data-enable-grammarly="false"
-              onBlur={handleDateEdit}
+              style={{
+                cursor: isEditMode ? 'default' : 'pointer',
+                borderBottom: isEditMode ? undefined : '1px dashed #93c5fd',
+              }}
+              onClick={handleDateClick}
+              title={isEditMode ? undefined : 'Click to change date'}
             >
               {formatDate_Long(previewInvoice.date)}
             </span>
+            {datePickerAnchor && (
+              <DatePicker
+                value={previewInvoice.date}
+                onChange={(date) => {
+                  updateInvoiceDate(date);
+                  setDatePickerAnchor(null);
+                }}
+                onClose={() => setDatePickerAnchor(null)}
+                anchorRect={datePickerAnchor}
+              />
+            )}
+          </div>
+        </DraggableField>
+      )}
+
+      {/* Invoice Due Date */}
+      {fields.invoiceDueDate.visible && (
+        <DraggableField
+          id="field-invoiceDueDate"
+          fieldType="invoiceDueDate"
+          isEditMode={isEditMode}
+          isSelected={selectedField === 'invoiceDueDate'}
+          onClick={() => onFieldSelect('invoiceDueDate')}
+          style={{
+            position: 'absolute',
+            top: `${fields.invoiceDueDate.position.y}px`,
+            left: `${fields.invoiceDueDate.position.x}px`,
+            width: `${fields.invoiceDueDate.position.width}px`,
+          }}
+        >
+          <div
+            className="break-words"
+            style={{
+              fontSize: `clamp(11px, ${fields.invoiceDueDate.style.fontSize * 0.8}px, ${fields.invoiceDueDate.style.fontSize}px)`,
+              color: fields.invoiceDueDate.style.color,
+              fontWeight: fields.invoiceDueDate.style.fontWeight,
+              textAlign: fields.invoiceDueDate.style.textAlign,
+            }}
+          >
+            {previewInvoice.dueDate && !isEditMode && (
+              <button
+                onClick={() => updateInvoiceDueDate(undefined)}
+                className="mr-1.5 text-gray-400 hover:text-red-500 transition-colors"
+                title="Remove due date"
+                style={{ lineHeight: 1 }}
+              >
+                <svg className="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+            <span className="font-bold">Due Date:</span>{' '}
+            {previewInvoice.dueDate ? (
+              <>
+                <span
+                  className="break-words"
+                  style={{
+                    cursor: isEditMode ? 'default' : 'pointer',
+                    borderBottom: isEditMode ? undefined : '1px dashed #93c5fd',
+                  }}
+                  onClick={handleDueDateClick}
+                  title={isEditMode ? undefined : 'Click to change due date'}
+                >
+                  {formatDate_Long(previewInvoice.dueDate)}
+                </span>
+              </>
+            ) : (
+              !isEditMode && (
+                <button
+                  onClick={(e) => {
+                    const d = new Date();
+                    d.setDate(d.getDate() + 30);
+                    updateInvoiceDueDate(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0));
+                  }}
+                  className="text-primary-500 hover:text-primary-700 transition-colors text-xs font-medium"
+                  style={{ borderBottom: '1px dashed #93c5fd' }}
+                >
+                  + Add due date
+                </button>
+              )
+            )}
+            {dueDatePickerAnchor && previewInvoice.dueDate && (
+              <DatePicker
+                value={previewInvoice.dueDate}
+                onChange={(date) => {
+                  updateInvoiceDueDate(date);
+                  setDueDatePickerAnchor(null);
+                }}
+                onClose={() => setDueDatePickerAnchor(null)}
+                anchorRect={dueDatePickerAnchor}
+              />
+            )}
           </div>
         </DraggableField>
       )}
@@ -456,7 +615,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
               From:
             </h3>
             <div
-              className="font-semibold break-words"
+              className="font-semibold break-words text-sm"
               contentEditable={!isEditMode}
               suppressContentEditableWarning
               data-gramm="false"
@@ -512,7 +671,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
               Bill To:
             </h3>
             <div
-              className="font-semibold break-words"
+              className="font-semibold break-words text-sm"
               contentEditable={!isEditMode}
               suppressContentEditableWarning
               data-gramm="false"
@@ -609,10 +768,10 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
             >
               <thead>
                 <tr style={{ backgroundColor: globalStyles.primaryColor, color: 'white' }}>
-                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-left">Description</th>
-                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap">Qty</th>
-                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">Unit Price</th>
-                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">Total</th>
+                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-left" style={{ verticalAlign: 'middle' }}>Description</th>
+                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap" style={{ verticalAlign: 'middle' }}>Qty</th>
+                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap" style={{ verticalAlign: 'middle' }}>Unit Price</th>
+                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap" style={{ verticalAlign: 'middle' }}>Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -626,7 +785,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                       position: 'relative',
                     }}
                   >
-                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 break-words">
+                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 break-words" style={{ verticalAlign: 'middle' }}>
                       <div
                         contentEditable={!isEditMode}
                         suppressContentEditableWarning
@@ -637,19 +796,17 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                           updateLineItem(item.id, { description: e.currentTarget.textContent || '' })
                         }
                         style={{
-                          display: 'block',
                           wordWrap: 'break-word',
                           overflowWrap: 'break-word',
                           wordBreak: 'break-word',
                           whiteSpace: 'pre-wrap',
-                          minHeight: '1em',
                           outline: 'none',
                         }}
                       >
                         {item.description}
                       </div>
                     </td>
-                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap">
+                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap" style={{ verticalAlign: 'middle' }}>
                       <div
                         contentEditable={!isEditMode}
                         suppressContentEditableWarning
@@ -662,16 +819,14 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                           })
                         }
                         style={{
-                          display: 'block',
                           whiteSpace: 'nowrap',
-                          minHeight: '1em',
                           outline: 'none',
                         }}
                       >
                         {item.quantity}
                       </div>
                     </td>
-                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">
+                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap" style={{ verticalAlign: 'middle' }}>
                       <div
                         contentEditable={!isEditMode}
                         suppressContentEditableWarning
@@ -684,16 +839,14 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                           updateLineItem(item.id, { unitPrice: numericValue });
                         }}
                         style={{
-                          display: 'block',
                           whiteSpace: 'nowrap',
-                          minHeight: '1em',
                           outline: 'none',
                         }}
                       >
                         {formatCurrency(item.unitPrice, previewInvoice.currency)}
                       </div>
                     </td>
-                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap">
+                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap" style={{ verticalAlign: 'middle' }}>
                       {formatCurrency(item.total, previewInvoice.currency)}
                     </td>
                     {/* Delete button that appears on hover */}
