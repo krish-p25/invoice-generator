@@ -32,9 +32,6 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
   snapGuides,
 }) => {
   const [hoveredRowId, setHoveredRowId] = React.useState<string | null>(null);
-  const [isVATHovered, setIsVATHovered] = React.useState(false);
-  const [isDiscountHovered, setIsDiscountHovered] = React.useState(false);
-  const [isShippingHovered, setIsShippingHovered] = React.useState(false);
   const [isLogoHovered, setIsLogoHovered] = React.useState(false);
   const [datePickerAnchor, setDatePickerAnchor] = React.useState<DOMRect | null>(null);
   const [dueDatePickerAnchor, setDueDatePickerAnchor] = React.useState<DOMRect | null>(null);
@@ -847,38 +844,38 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                         {formatCurrency(item.unitPrice, previewInvoice.currency)}
                       </div>
                     </td>
-                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap" style={{ verticalAlign: 'middle' }}>
+                    <td
+                      className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap"
+                      style={{ verticalAlign: 'middle', position: 'relative' }}
+                    >
                       {formatCurrency(item.total, previewInvoice.currency)}
-                    </td>
-                    {/* Delete button that appears on hover */}
-                    {!isEditMode && (
-                      <td
-                        className="border-0 p-0"
-                        onMouseEnter={() => setHoveredRowId(item.id)}
-                        onMouseLeave={() => setHoveredRowId(null)}
-                        style={{
-                          position: 'absolute',
-                          right: '-48px',
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          zIndex: 10,
-                          opacity: hoveredRowId === item.id ? 1 : 0,
-                          pointerEvents: hoveredRowId === item.id ? 'auto' : 'none',
-                          transition: 'opacity 0.2s ease-in-out, transform 0.2s ease-in-out',
-                          paddingLeft: '20px',
-                          width: '60px',
-                        }}
-                      >
-                        <button
-                          onClick={() => removeLineItem(item.id)}
-                          className="bg-red-500 hover:bg-red-600 hover:scale-110 text-white w-8 h-8 rounded-full shadow-lg flex items-center justify-center transition-all duration-200"
-                          style={{ fontSize: '16px', fontWeight: 'bold', marginLeft: 'auto' }}
-                          title="Remove row"
+                      {/* Delete button that appears on row hover */}
+                      {!isEditMode && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            left: '100%',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            paddingLeft: '8px',
+                            zIndex: 10,
+                            opacity: hoveredRowId === item.id ? 1 : 0,
+                            pointerEvents: hoveredRowId === item.id ? 'auto' : 'none',
+                            transition: 'opacity 0.15s ease-in-out',
+                          }}
                         >
-                          ✕
-                        </button>
-                      </td>
-                    )}
+                          <button
+                            onClick={() => removeLineItem(item.id)}
+                            className="text-gray-400 hover:text-red-500 transition-colors"
+                            title="Remove row"
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -968,12 +965,19 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
 
               {/* VAT Section with Toggle */}
               {previewInvoice.showVAT ? (
-                <div
-                  className="flex justify-between items-center"
-                  onMouseEnter={() => setIsVATHovered(true)}
-                  onMouseLeave={() => setIsVATHovered(false)}
-                >
+                <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
+                    {!isEditMode && (
+                      <button
+                        onClick={toggleVAT}
+                        className="text-gray-400 hover:text-red-500 transition-colors mr-1.5"
+                        title="Remove VAT"
+                      >
+                        <svg className="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
                     <span>VAT:</span>
                     {!isEditMode && (
                       <button
@@ -1007,17 +1011,6 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                             ? formatCurrency(previewInvoice.vatValue, previewInvoice.currency)
                             : `${previewInvoice.vatValue}%`}
                         </div>
-                        {isVATHovered && (
-                          <button
-                            onClick={toggleVAT}
-                            className="transition-opacity text-red-500 hover:text-red-700 ml-1"
-                            title="Remove VAT"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        )}
                       </>
                     ) : (
                       <span className="font-semibold">
@@ -1046,12 +1039,19 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
 
               {/* Discount Section */}
               {previewInvoice.showDiscount ? (
-                <div
-                  className="flex justify-between items-center"
-                  onMouseEnter={() => setIsDiscountHovered(true)}
-                  onMouseLeave={() => setIsDiscountHovered(false)}
-                >
+                <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
+                    {!isEditMode && (
+                      <button
+                        onClick={toggleDiscount}
+                        className="text-gray-400 hover:text-red-500 transition-colors mr-1.5"
+                        title="Remove Discount"
+                      >
+                        <svg className="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
                     <span>Discount:</span>
                     {!isEditMode && (
                       <button
@@ -1085,17 +1085,6 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                             ? formatCurrency(previewInvoice.discountValue, previewInvoice.currency)
                             : `${previewInvoice.discountValue}%`}
                         </div>
-                        {isDiscountHovered && (
-                          <button
-                            onClick={toggleDiscount}
-                            className="transition-opacity text-red-500 hover:text-red-700 ml-1"
-                            title="Remove Discount"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        )}
                       </>
                     ) : (
                       <span className="font-semibold">
@@ -1124,42 +1113,38 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
 
               {/* Shipping Fee Section */}
               {previewInvoice.showShipping ? (
-                <div
-                  className="flex justify-between items-center"
-                  onMouseEnter={() => setIsShippingHovered(true)}
-                  onMouseLeave={() => setIsShippingHovered(false)}
-                >
-                  <span>Shipping:</span>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    {!isEditMode && (
+                      <button
+                        onClick={toggleShipping}
+                        className="text-gray-400 hover:text-red-500 transition-colors mr-1.5"
+                        title="Remove Shipping"
+                      >
+                        <svg className="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
+                    <span>Shipping:</span>
+                  </div>
                   <div className="flex items-center gap-1">
                     {!isEditMode ? (
-                      <>
-                        <div
-                          contentEditable={!isEditMode}
-                          suppressContentEditableWarning
-                          data-gramm="false"
-                          data-gramm_editor="false"
-                          data-enable-grammarly="false"
-                          onBlur={(e) => {
-                            const text = e.currentTarget.textContent || '0';
-                            const numericValue = parseFloat(text.replace(/[^0-9.-]/g, '')) || 0;
-                            updateShippingFee(numericValue);
-                          }}
-                          className="font-semibold"
-                        >
-                          {formatCurrency(previewInvoice.shippingFee, previewInvoice.currency)}
-                        </div>
-                        {isShippingHovered && (
-                          <button
-                            onClick={toggleShipping}
-                            className="transition-opacity text-red-500 hover:text-red-700 ml-1"
-                            title="Remove Shipping"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        )}
-                      </>
+                      <div
+                        contentEditable={!isEditMode}
+                        suppressContentEditableWarning
+                        data-gramm="false"
+                        data-gramm_editor="false"
+                        data-enable-grammarly="false"
+                        onBlur={(e) => {
+                          const text = e.currentTarget.textContent || '0';
+                          const numericValue = parseFloat(text.replace(/[^0-9.-]/g, '')) || 0;
+                          updateShippingFee(numericValue);
+                        }}
+                        className="font-semibold"
+                      >
+                        {formatCurrency(previewInvoice.shippingFee, previewInvoice.currency)}
+                      </div>
                     ) : (
                       <span className="font-semibold">
                         {formatCurrency(previewInvoice.shippingFee, previewInvoice.currency)}
