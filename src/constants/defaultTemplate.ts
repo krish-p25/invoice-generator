@@ -60,6 +60,14 @@ export const defaultTemplate: TemplateConfig = {
       position: { x: 500, y: 75, width: 220, height: 30, zIndex: 1 },
       style: { ...defaultFieldStyle, textAlign: 'right' },
     },
+    invoiceDueDate: {
+      id: 'invoiceDueDate',
+      type: 'invoiceDueDate',
+      label: 'Due Date',
+      visible: true,
+      position: { x: 500, y: 105, width: 220, height: 30, zIndex: 1 },
+      style: { ...defaultFieldStyle, textAlign: 'right' },
+    },
     billFrom: {
       id: 'billFrom',
       type: 'billFrom',
@@ -119,7 +127,7 @@ export const defaultTemplate: TemplateConfig = {
   },
 
   layout: {
-    headerFields: ['logo', 'invoiceNumber', 'invoiceDate'],
+    headerFields: ['logo', 'invoiceNumber', 'invoiceDate', 'invoiceDueDate'],
     bodyFields: ['billFrom', 'billTo', 'billingAddress', 'shippingAddress', 'lineItems'],
     footerFields: ['totals', 'notes'],
   },
