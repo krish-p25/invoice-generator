@@ -217,7 +217,7 @@ export const TemplateCanvas: React.FC = () => {
         </div>
 
         {/* Row 2: action buttons */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap sm:justify-end">
           {!isEditMode && (
             <Button variant="outline" size="sm" onClick={resetToSample} className="flex-1 sm:flex-none justify-center">
               <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
