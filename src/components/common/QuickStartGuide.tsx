@@ -85,60 +85,45 @@ export const QuickStartGuide: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-r from-primary-50 to-primary-100 border-2 border-primary-200 py-6 sm:py-8 rounded-xl shadow-md px-4">
-      <div className="container mx-auto px-3 sm:px-4">
+      <div className="container mx-auto px-0 sm:px-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
             How to Generate Bulk Invoices in 3 Easy Steps
           </h2>
-          <div className="flex-shrink-0">
-            <CSVDownloadButton />
+          <div className="flex-shrink-0 w-full sm:w-auto">
+            <CSVDownloadButton className="w-full sm:w-auto justify-center" />
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-6xl mx-auto">
+        <div className="space-y-3 max-w-4xl mx-auto">
           {steps.map((step) => {
             const colors = getColorClasses(step.color);
             return (
-              <div
-                key={step.number}
-                className={`${colors.bg} ${colors.border} border-2 rounded-lg p-4 sm:p-6 relative`}
-              >
-                <div className="flex items-start gap-4">
-                  {/* Step Number Badge */}
-                  <div
-                    className={`${colors.number} text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-lg sm:text-xl flex-shrink-0`}
-                  >
-                    {step.number}
+              <div key={step.number}>
+                <div className={`${colors.bg} ${colors.border} border-2 rounded-xl p-4 sm:p-5 flex items-start gap-4`}>
+                  {/* Left: number badge + icon stacked */}
+                  <div className="flex flex-col items-center gap-2 flex-shrink-0">
+                    <div className={`${colors.number} text-white rounded-full w-9 h-9 flex items-center justify-center font-bold text-lg`}>
+                      {step.number}
+                    </div>
+                    <div className={`${colors.icon}`}>{step.icon}</div>
                   </div>
 
-                  <div className="flex-1 min-w-0">
-                    {/* Icon */}
-                    <div className={`${colors.icon} mb-3`}>{step.icon}</div>
-
-                    {/* Title */}
-                    <h3 className={`${colors.title} font-bold text-base sm:text-lg mb-2`}>
+                  {/* Right: title + description */}
+                  <div className="flex-1 min-w-0 pt-1">
+                    <h3 className={`${colors.title} font-bold text-base sm:text-lg mb-1.5`}>
                       {step.title}
                     </h3>
-
-                    {/* Description */}
-                    <p className={`${colors.desc} text-xs sm:text-sm leading-relaxed`}>
+                    <p className={`${colors.desc} text-sm leading-relaxed`}>
                       {step.description}
                     </p>
                   </div>
                 </div>
 
-                {/* Arrow for desktop view - positioned absolutely outside the box */}
+                {/* Connector arrow between steps */}
                 {step.number < 3 && (
-                  <div className="hidden md:flex absolute -right-8 top-0 bottom-0 items-center justify-center z-10">
-                    <svg
-                      className="w-8 h-8 text-primary-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        clipRule="evenodd"
-                      />
+                  <div className="flex justify-center py-1">
+                    <svg className="w-5 h-5 text-primary-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                     </svg>
                   </div>
                 )}
