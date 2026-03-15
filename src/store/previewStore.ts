@@ -12,6 +12,7 @@ interface PreviewInvoiceState {
   updateInvoiceNumber: (number: string) => void;
   incrementInvoiceNumber: () => void;
   updateInvoiceDate: (date: Date) => void;
+  updateInvoiceDueDate: (date: Date | undefined) => void;
   updateNotes: (notes: string) => void;
   updateCurrency: (currency: string) => void;
   updateLineItem: (itemId: string, updates: Partial<LineItem>) => void;
@@ -150,6 +151,14 @@ export const usePreviewStore = create<PreviewInvoiceState>()(
           previewInvoice: {
             ...state.previewInvoice,
             date,
+          },
+        })),
+
+      updateInvoiceDueDate: (dueDate) =>
+        set((state) => ({
+          previewInvoice: {
+            ...state.previewInvoice,
+            dueDate,
           },
         })),
 
