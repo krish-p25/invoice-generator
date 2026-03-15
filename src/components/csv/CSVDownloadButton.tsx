@@ -2,13 +2,13 @@ import React from 'react';
 import { Button } from '../common/Button';
 import { downloadCSVTemplate } from '../../utils/csvGenerator';
 
-export const CSVDownloadButton: React.FC = () => {
+export const CSVDownloadButton: React.FC<{ className?: string }> = ({ className }) => {
   const handleDownload = () => {
     downloadCSVTemplate();
   };
 
   return (
-    <Button variant="primary" onClick={handleDownload}>
+    <Button variant="primary" onClick={handleDownload} className={className}>
       <svg
         className="w-5 h-5 flex-shrink-0"
         fill="none"
