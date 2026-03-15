@@ -2,6 +2,7 @@ export type FieldType =
   | 'logo'
   | 'invoiceNumber'
   | 'invoiceDate'
+  | 'invoiceDueDate'
   | 'billFrom'
   | 'billTo'
   | 'billingAddress'
