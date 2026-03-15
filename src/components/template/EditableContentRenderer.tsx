@@ -562,6 +562,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
               !isEditMode && (
                 <button
                   onClick={(e) => {
+                    e = e
                     const d = new Date();
                     d.setDate(d.getDate() + 30);
                     updateInvoiceDueDate(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0));
