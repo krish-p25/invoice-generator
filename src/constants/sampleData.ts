@@ -4,6 +4,7 @@ export const SAMPLE_INVOICE: Invoice = {
   id: 'sample',
   invoiceNumber: 'INV-2026-0001',
   date: new Date('2026-01-15'),
+  dueDate: new Date('2026-02-14'),
   billFrom: {
     name: 'Your Company Name',
     address: '123 Business Street\nCity, State 12345\nCountry',
