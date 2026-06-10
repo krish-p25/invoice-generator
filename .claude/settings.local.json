@@ -3,7 +3,21 @@
     "allow": [
       "Bash(npm create:*)",
       "Bash(yes:*)",
-      "Bash(npm install)"
+      "Bash(npm install)",
+      "Bash(npm run *)",
+      "Bash(docker-compose up *)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(curl -s http://localhost/)",
+      "Bash(python generate_nginx_config.py)",
+      "Bash(docker-compose restart *)",
+      "Bash(python3 generate_nginx_config.py)",
+      "PowerShell(docker-compose *)",
+      "Bash(pkill -f \"npm run preview\")",
+      "Bash(curl -s http://localhost/ -H \"Host: invoice.krishrp.xyz\")",
+      "Bash(docker-compose down *)",
+      "Bash(curl -s http://localhost:81)",
+      "Bash(docker-compose logs *)",
+      "Bash(docker build *)"
     ]
   }
 }

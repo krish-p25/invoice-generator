@@ -1,0 +1,12 @@
+node_modules
+npm
+dist
+.git
+.env
+.DS_Store
+*.md
+docker-compose.yml
+Dockerfile
+.claude
+tsconfig.app.tsbuildinfo
+tsconfig.node.tsbuildinfo

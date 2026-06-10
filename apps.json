@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "name": "invoice",
+      "subdomain": "invoice",
+      "port": 3000,
+      "description": "Invoice generator app"
+    }
+  ],
+  "settings": {
+    "domain": "krishrp.xyz",
+    "email": "krishkp2502@gmail.com"
+  }
+}
