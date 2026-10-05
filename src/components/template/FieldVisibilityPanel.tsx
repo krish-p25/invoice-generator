@@ -4,7 +4,8 @@ import { Toggle } from '../common/Toggle';
 import { FieldType } from '../../types';
 
 export const FieldVisibilityPanel: React.FC = () => {
-  const { config, updateFieldVisibility } = useTemplateStore();
+  const { config, updateFieldVisibility, updateLineItemColumn } = useTemplateStore();
+  const { showQuantity, showUnitPrice } = config.lineItemColumns;
 
   const fieldGroups = [
     {
@@ -46,6 +47,32 @@ export const FieldVisibilityPanel: React.FC = () => {
           </div>
         </div>
       ))}
+
+      <div className="space-y-3 pt-4 border-t border-gray-200">
+        <h4 className="text-sm font-medium text-gray-700 uppercase tracking-wide">
+          Line Item Columns
+        </h4>
+        <div className="space-y-2">
+          <Toggle
+            label="Qty"
+            checked={showQuantity}
+            onChange={(checked) => updateLineItemColumn('showQuantity', checked)}
+          />
+          <Toggle
+            label="Unit Price"
+            checked={showUnitPrice}
+            disabled={showQuantity}
+            onChange={(checked) => updateLineItemColumn('showUnitPrice', checked)}
+          />
+        </div>
+        <p className="text-xs text-gray-500">
+          {showQuantity
+            ? 'Turn off Qty to allow hiding Unit Price too.'
+            : showUnitPrice
+              ? 'Each line shows a unit price and a total.'
+              : 'Each line is just a description and an amount — suited to a single item or a service.'}
+        </p>
+      </div>
 
       <div className="pt-4 border-t border-gray-200">
         <p className="text-xs text-gray-500">

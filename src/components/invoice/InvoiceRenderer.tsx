@@ -11,7 +11,12 @@ interface InvoiceRendererProps {
 
 export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id, disableScaling = false }) => {
   const { config } = useTemplateStore();
-  const { globalStyles, fields, logo } = config;
+  const { globalStyles, fields, logo, lineItemColumns } = config;
+  // With neither Qty nor Unit Price shown, the last column is no longer a
+  // product of two visible numbers, so "Amount" reads correctly where
+  // "Total" would imply a calculation the reader cannot see.
+  const amountHeading =
+    lineItemColumns.showQuantity || lineItemColumns.showUnitPrice ? 'Total' : 'Amount';
   const [scale, setScale] = React.useState<number>(1);
   const [invoiceHeight, setInvoiceHeight] = React.useState<number>(1123);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -223,14 +228,18 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id, d
                     <th className="border border-gray-300" style={{ padding: 0, textAlign: 'left', height: '40px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>Description</div>
                     </th>
-                    <th className="border border-gray-300" style={{ padding: 0, textAlign: 'center', whiteSpace: 'nowrap', height: '40px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>Qty</div>
-                    </th>
+                    {lineItemColumns.showQuantity && (
+                      <th className="border border-gray-300" style={{ padding: 0, textAlign: 'center', whiteSpace: 'nowrap', height: '40px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>Qty</div>
+                      </th>
+                    )}
+                    {lineItemColumns.showUnitPrice && (
+                      <th className="border border-gray-300" style={{ padding: 0, textAlign: 'right', whiteSpace: 'nowrap', height: '40px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>Unit Price</div>
+                      </th>
+                    )}
                     <th className="border border-gray-300" style={{ padding: 0, textAlign: 'right', whiteSpace: 'nowrap', height: '40px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>Unit Price</div>
-                    </th>
-                    <th className="border border-gray-300" style={{ padding: 0, textAlign: 'right', whiteSpace: 'nowrap', height: '40px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>Total</div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>{amountHeading}</div>
                     </th>
                   </tr>
                 </thead>
@@ -247,16 +256,20 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id, d
                           {item.description}
                         </div>
                       </td>
-                      <td className="border border-gray-300" style={{ padding: 0, textAlign: 'center', whiteSpace: 'nowrap', height: '40px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>
-                          {item.quantity}
-                        </div>
-                      </td>
-                      <td className="border border-gray-300" style={{ padding: 0, textAlign: 'right', whiteSpace: 'nowrap', height: '40px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>
-                          {formatCurrency(item.unitPrice, invoice.currency)}
-                        </div>
-                      </td>
+                      {lineItemColumns.showQuantity && (
+                        <td className="border border-gray-300" style={{ padding: 0, textAlign: 'center', whiteSpace: 'nowrap', height: '40px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>
+                            {item.quantity}
+                          </div>
+                        </td>
+                      )}
+                      {lineItemColumns.showUnitPrice && (
+                        <td className="border border-gray-300" style={{ padding: 0, textAlign: 'right', whiteSpace: 'nowrap', height: '40px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>
+                            {formatCurrency(item.unitPrice, invoice.currency)}
+                          </div>
+                        </td>
+                      )}
                       <td className="border border-gray-300" style={{ padding: 0, textAlign: 'right', whiteSpace: 'nowrap', height: '40px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', paddingLeft: '16px', paddingRight: '16px' }}>
                           {formatCurrency(item.total, invoice.currency)}
