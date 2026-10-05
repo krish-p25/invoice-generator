@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { TemplateConfig, FieldType, FieldConfig } from '../types';
+import { TemplateConfig, FieldType, FieldConfig, LineItemColumn } from '../types';
 import { defaultTemplate } from '../constants/defaultTemplate';
 
 interface TemplateState {
@@ -15,6 +15,7 @@ interface TemplateState {
     position: Partial<FieldConfig['position']>
   ) => void;
   updateFieldStyle: (fieldType: FieldType, style: Partial<FieldConfig['style']>) => void;
+  updateLineItemColumn: (column: LineItemColumn, visible: boolean) => void;
   updateLogo: (logoData: Partial<TemplateConfig['logo']>) => void;
   reorderFields: (
     zone: 'headerFields' | 'bodyFields' | 'footerFields',
@@ -94,6 +95,34 @@ export const useTemplateStore = create<TemplateState>()(
           isDirty: true,
         })),
 
+      // Enforces "showQuantity implies showUnitPrice" here rather than in the
+      // panel, so the invalid pair cannot be reached from any caller:
+      //  - showing Qty restores Unit Price, since a bare Qty column would
+      //    leave the row total looking like an arithmetic error
+      //  - hiding Qty leaves Unit Price untouched and merely unlocks it
+      // Note this only changes what is drawn. Stored quantities are never
+      // rewritten, because a display toggle must not move money.
+      updateLineItemColumn: (column, visible) =>
+        set((state) => {
+          const next = { ...state.config.lineItemColumns, [column]: visible };
+
+          if (column === 'showQuantity' && visible) {
+            next.showUnitPrice = true;
+          }
+          if (column === 'showUnitPrice' && !visible) {
+            next.showQuantity = false;
+          }
+
+          return {
+            config: {
+              ...state.config,
+              lineItemColumns: next,
+              updatedAt: new Date(),
+            },
+            isDirty: true,
+          };
+        }),
+
       updateLogo: (logoData) =>
         set((state) => ({
           config: {
@@ -134,7 +163,7 @@ export const useTemplateStore = create<TemplateState>()(
     }),
     {
       name: 'invoice-template-config',
-      version: 3,
+      version: 4,
       migrate: (persistedState: any) => {
         // Migrate old table width (680) to new centered width (714)
         if (persistedState?.config?.fields?.lineItems?.position?.width === 680) {
@@ -147,6 +176,13 @@ export const useTemplateStore = create<TemplateState>()(
             ...persistedState.config.layout.headerFields.filter((f: string) => f !== 'invoiceDueDate'),
             'invoiceDueDate',
           ];
+        }
+        // Add lineItemColumns if missing. Defaults to both visible, matching
+        // the four-column table every existing template already renders.
+        if (!persistedState?.config?.lineItemColumns) {
+          persistedState.config.lineItemColumns = {
+            ...defaultTemplate.lineItemColumns,
+          };
         }
         return persistedState;
       },

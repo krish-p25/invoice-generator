@@ -42,7 +42,9 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
   const containerRef = React.useRef<HTMLDivElement>(null);
   const invoiceRef = React.useRef<HTMLDivElement>(null);
   const { config, updateFieldPosition, updateLogo } = useTemplateStore();
-  const { globalStyles, fields, logo } = config;
+  const { globalStyles, fields, logo, lineItemColumns } = config;
+  const amountHeading =
+    lineItemColumns.showQuantity || lineItemColumns.showUnitPrice ? 'Total' : 'Amount';
   const {
     previewInvoice,
     updateBillFrom,
@@ -801,9 +803,13 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
               <thead>
                 <tr style={{ backgroundColor: globalStyles.primaryColor, color: 'white' }}>
                   <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-left" style={{ verticalAlign: 'middle' }}>Description</th>
-                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap" style={{ verticalAlign: 'middle' }}>Qty</th>
-                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap" style={{ verticalAlign: 'middle' }}>Unit Price</th>
-                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap" style={{ verticalAlign: 'middle' }}>Total</th>
+                  {lineItemColumns.showQuantity && (
+                    <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap" style={{ verticalAlign: 'middle' }}>Qty</th>
+                  )}
+                  {lineItemColumns.showUnitPrice && (
+                    <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap" style={{ verticalAlign: 'middle' }}>Unit Price</th>
+                  )}
+                  <th className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap" style={{ verticalAlign: 'middle' }}>{amountHeading}</th>
                 </tr>
               </thead>
               <tbody>
@@ -838,51 +844,78 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
                         {item.description}
                       </div>
                     </td>
-                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap" style={{ verticalAlign: 'middle' }}>
-                      <div
-                        contentEditable={!isEditMode}
-                        suppressContentEditableWarning
-                        data-gramm="false"
-                        data-gramm_editor="false"
-                        data-enable-grammarly="false"
-                        onBlur={(e) =>
-                          updateLineItem(item.id, {
-                            quantity: parseFloat(e.currentTarget.textContent || '1') || 1,
-                          })
-                        }
-                        style={{
-                          whiteSpace: 'nowrap',
-                          outline: 'none',
-                        }}
-                      >
-                        {item.quantity}
-                      </div>
-                    </td>
-                    <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap" style={{ verticalAlign: 'middle' }}>
-                      <div
-                        contentEditable={!isEditMode}
-                        suppressContentEditableWarning
-                        data-gramm="false"
-                        data-gramm_editor="false"
-                        data-enable-grammarly="false"
-                        onBlur={(e) => {
-                          const text = e.currentTarget.textContent || '0';
-                          const numericValue = parseFloat(text.replace(/[^0-9.-]/g, '')) || 0;
-                          updateLineItem(item.id, { unitPrice: numericValue });
-                        }}
-                        style={{
-                          whiteSpace: 'nowrap',
-                          outline: 'none',
-                        }}
-                      >
-                        {formatCurrency(item.unitPrice, previewInvoice.currency)}
-                      </div>
-                    </td>
+                    {lineItemColumns.showQuantity && (
+                      <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-center whitespace-nowrap" style={{ verticalAlign: 'middle' }}>
+                        <div
+                          contentEditable={!isEditMode}
+                          suppressContentEditableWarning
+                          data-gramm="false"
+                          data-gramm_editor="false"
+                          data-enable-grammarly="false"
+                          onBlur={(e) =>
+                            updateLineItem(item.id, {
+                              quantity: parseFloat(e.currentTarget.textContent || '1') || 1,
+                            })
+                          }
+                          style={{
+                            whiteSpace: 'nowrap',
+                            outline: 'none',
+                          }}
+                        >
+                          {item.quantity}
+                        </div>
+                      </td>
+                    )}
+                    {lineItemColumns.showUnitPrice && (
+                      <td className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap" style={{ verticalAlign: 'middle' }}>
+                        <div
+                          contentEditable={!isEditMode}
+                          suppressContentEditableWarning
+                          data-gramm="false"
+                          data-gramm_editor="false"
+                          data-enable-grammarly="false"
+                          onBlur={(e) => {
+                            const text = e.currentTarget.textContent || '0';
+                            const numericValue = parseFloat(text.replace(/[^0-9.-]/g, '')) || 0;
+                            updateLineItem(item.id, { unitPrice: numericValue });
+                          }}
+                          style={{
+                            whiteSpace: 'nowrap',
+                            outline: 'none',
+                          }}
+                        >
+                          {formatCurrency(item.unitPrice, previewInvoice.currency)}
+                        </div>
+                      </td>
+                    )}
                     <td
                       className="border border-gray-300 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-right whitespace-nowrap"
                       style={{ verticalAlign: 'middle', position: 'relative' }}
                     >
-                      {formatCurrency(item.total, previewInvoice.currency)}
+                      {/* With Unit Price hidden there is no other editable money
+                          input on the row, so the amount itself becomes the
+                          input. The store invariant guarantees Qty is hidden
+                          too, which is why quantity can be pinned to 1: it
+                          makes the typed amount exactly the line total. */}
+                      {!lineItemColumns.showUnitPrice && !isEditMode ? (
+                        <div
+                          contentEditable
+                          suppressContentEditableWarning
+                          data-gramm="false"
+                          data-gramm_editor="false"
+                          data-enable-grammarly="false"
+                          onBlur={(e) => {
+                            const text = e.currentTarget.textContent || '0';
+                            const numericValue = parseFloat(text.replace(/[^0-9.-]/g, '')) || 0;
+                            updateLineItem(item.id, { unitPrice: numericValue, quantity: 1 });
+                          }}
+                          style={{ whiteSpace: 'nowrap', outline: 'none' }}
+                        >
+                          {formatCurrency(item.total, previewInvoice.currency)}
+                        </div>
+                      ) : (
+                        formatCurrency(item.total, previewInvoice.currency)
+                      )}
                       {/* Delete button that appears on row hover */}
                       {!isEditMode && (
                         <div

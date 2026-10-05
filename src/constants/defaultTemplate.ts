@@ -126,6 +126,11 @@ export const defaultTemplate: TemplateConfig = {
     },
   },
 
+  lineItemColumns: {
+    showQuantity: true,
+    showUnitPrice: true,
+  },
+
   layout: {
     headerFields: ['logo', 'invoiceNumber', 'invoiceDate', 'invoiceDueDate'],
     bodyFields: ['billFrom', 'billTo', 'billingAddress', 'shippingAddress', 'lineItems'],

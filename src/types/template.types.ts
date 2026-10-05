@@ -65,12 +65,23 @@ export interface TemplateConfig {
 
   fields: Record<FieldType, FieldConfig>;
 
+  // Columns inside the lineItems table. These are not FieldTypes: they are not
+  // independently positionable, they only widen or narrow the one table.
+  // Invariant: showQuantity implies showUnitPrice. A visible Qty beside a
+  // hidden Unit Price would leave the row total unexplained.
+  lineItemColumns: {
+    showQuantity: boolean;
+    showUnitPrice: boolean;
+  };
+
   layout: {
     headerFields: FieldType[];
     bodyFields: FieldType[];
     footerFields: FieldType[];
   };
 }
+
+export type LineItemColumn = keyof TemplateConfig['lineItemColumns'];
 
 export interface TemplatePreset {
   id: string;
