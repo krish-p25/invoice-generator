@@ -63,6 +63,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
     toggleDiscount,
     updateShippingFee,
     toggleShipping,
+    toggleShippingAddress,
   } = usePreviewStore();
 
   // Calculate scale factor based on container width
@@ -699,7 +700,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
       )}
 
       {/* Shipping Address */}
-      {fields.shippingAddress.visible && previewInvoice.shippingAddress && (
+      {fields.shippingAddress.visible && previewInvoice.showShippingAddress && (
         <DraggableField
           id="field-shippingAddress"
           fieldType="shippingAddress"
@@ -721,11 +722,26 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
               padding: `${Math.max(4, fields.shippingAddress.style.padding * 0.7)}px`,
             }}
           >
-            <h3 className="font-bold mb-1 sm:mb-2" style={{ color: globalStyles.primaryColor }}>
-              Shipping Address:
+            <h3
+              className="font-bold mb-1 sm:mb-2 flex items-center gap-1.5"
+              style={{ color: globalStyles.primaryColor }}
+            >
+              {!isEditMode && (
+                <button
+                  onClick={toggleShippingAddress}
+                  className="text-gray-400 hover:text-red-500 transition-colors"
+                  title="Remove Shipping Address"
+                >
+                  <svg className="w-3 h-3 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+              <span>Shipping Address:</span>
             </h3>
             <div
               className="text-xs sm:text-sm whitespace-pre-line break-words"
+              style={{ minHeight: '1.25rem' }}
               contentEditable={!isEditMode}
               suppressContentEditableWarning
               data-gramm="false"
@@ -737,6 +753,24 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
             </div>
           </div>
         </DraggableField>
+      )}
+
+      {/* Re-add control, shown in place of the hidden shipping address block */}
+      {fields.shippingAddress.visible && !previewInvoice.showShippingAddress && !isEditMode && (
+        <div
+          style={{
+            position: 'absolute',
+            top: `${fields.shippingAddress.position.y}px`,
+            left: `${fields.shippingAddress.position.x}px`,
+          }}
+        >
+          <button
+            onClick={toggleShippingAddress}
+            className="text-primary-600 hover:text-primary-800 hover:bg-primary-50 px-3 py-1 rounded text-sm font-medium border border-primary-300 transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap"
+          >
+            + Add Shipping Address
+          </button>
+        </div>
       )}
 
       {/* Line Items Table */}

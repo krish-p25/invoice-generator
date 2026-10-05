@@ -54,6 +54,7 @@ export const SAMPLE_INVOICE: Invoice = {
   discountValue: 0,
   totalDiscount: 0,
   showShipping: false,
+  showShippingAddress: true,
   shippingFee: 0,
   grandTotal: 600.0,
 };

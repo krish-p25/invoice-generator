@@ -3,6 +3,7 @@ export interface CSVRow {
   billTo: string;
   billingAddress: string;
   shippingAddress: string;
+  showShippingAddress: string;
   itemDescription: string;
   itemQuantity: string | number;
   itemPrice: string | number;
