@@ -23,6 +23,7 @@ export interface Invoice {
   billTo: InvoiceParty;
   billingAddress: string;
   shippingAddress: string;
+  showShippingAddress: boolean; // Whether the shipping address block is visible
   lineItems: LineItem[];
   notes: string;
   currency: string; // Currency code (e.g., 'USD', 'EUR')

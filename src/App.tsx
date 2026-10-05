@@ -92,6 +92,12 @@ function App() {
                 <p className="text-xs text-blue-700 mt-1">Customer shipping address</p>
               </div>
               <div className="bg-white rounded p-3 border border-blue-200">
+                <span className="font-semibold text-blue-900">show shipping address</span>
+                <p className="text-xs text-blue-700 mt-1">
+                  Optional. yes/no &mdash; hides the shipping address on that invoice
+                </p>
+              </div>
+              <div className="bg-white rounded p-3 border border-blue-200">
                 <span className="font-semibold text-blue-900">item description</span>
                 <p className="text-xs text-blue-700 mt-1">Product/service description</p>
               </div>

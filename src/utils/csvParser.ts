@@ -19,6 +19,7 @@ export function parseCSVFile(file: File): Promise<CSVParseResult> {
               billTo: row['bill to'] || '',
               billingAddress: row['billing address'] || '',
               shippingAddress: row['shipping address'] || '',
+              showShippingAddress: row['show shipping address'] || '',
               itemDescription: row['item description'] || '',
               itemQuantity: row['item quantity'] || '',
               itemPrice: row['item price'] || '',

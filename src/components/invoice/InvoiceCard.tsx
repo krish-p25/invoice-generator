@@ -3,12 +3,30 @@ import { Invoice } from '../../types';
 import { InvoicePreview } from './InvoicePreview';
 import { DownloadPanel } from './DownloadPanel';
 import { InvoiceRenderer } from './InvoiceRenderer';
+import { useInvoiceStore } from '../../store/invoiceStore';
+import { useTemplateStore } from '../../store/templateStore';
+import { Toggle } from '../common/Toggle';
 
 interface InvoiceCardProps {
   invoice: Invoice;
 }
 
 export const InvoiceCard: React.FC<InvoiceCardProps> = ({ invoice }) => {
+  const toggleShippingAddress = useInvoiceStore((state) => state.toggleShippingAddress);
+  const templateFieldVisible = useTemplateStore(
+    (state) => state.config.fields.shippingAddress.visible
+  );
+
+  // The template-level field switch is the master kill-switch: with it off the
+  // renderers hide the address regardless of this per-invoice flag, so leaving
+  // the toggle live would let the user flip a control that does nothing. Prefer
+  // disabling it and naming the place that actually governs it. The note is
+  // rendered only in that state, so it doesn't repeat down a long invoice list.
+  const toggleDisabled = !templateFieldVisible;
+  const toggleNote = templateFieldVisible
+    ? null
+    : 'Hidden on every invoice. Turn it back on under Customize → Fields.';
+
   return (
     <>
       {/* Hidden renderer for PDF generation */}
@@ -49,6 +67,16 @@ export const InvoiceCard: React.FC<InvoiceCardProps> = ({ invoice }) => {
               ${invoice.grandTotal.toFixed(2)}
             </span>
           </div>
+        </div>
+
+        <div className="mb-4 pb-4 border-b border-gray-200">
+          <Toggle
+            label="Shipping address"
+            checked={invoice.showShippingAddress}
+            disabled={toggleDisabled}
+            onChange={() => toggleShippingAddress(invoice.id)}
+          />
+          {toggleNote && <p className="mt-1.5 text-xs text-gray-500">{toggleNote}</p>}
         </div>
 
         <div className="flex gap-2">

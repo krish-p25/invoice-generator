@@ -12,6 +12,7 @@ interface InvoiceState {
   setRawCSVData: (data: CSVRow[]) => void;
   setGroupedInvoices: (invoices: Invoice[]) => void;
   selectInvoice: (id: string | null) => void;
+  toggleShippingAddress: (id: string) => void;
   clearInvoices: () => void;
   setProcessing: (isProcessing: boolean) => void;
   addError: (error: string) => void;
@@ -30,6 +31,15 @@ export const useInvoiceStore = create<InvoiceState>((set) => ({
   setGroupedInvoices: (invoices) => set({ groupedInvoices: invoices }),
 
   selectInvoice: (id) => set({ selectedInvoiceId: id }),
+
+  toggleShippingAddress: (id) =>
+    set((state) => ({
+      groupedInvoices: state.groupedInvoices.map((invoice) =>
+        invoice.id === id
+          ? { ...invoice, showShippingAddress: !invoice.showShippingAddress }
+          : invoice
+      ),
+    })),
 
   clearInvoices: () =>
     set({

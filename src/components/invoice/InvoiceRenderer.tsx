@@ -186,7 +186,9 @@ export const InvoiceRenderer: React.FC<InvoiceRendererProps> = ({ invoice, id, d
           </div>
 
           {/* Shipping Address */}
-          {fields.shippingAddress.visible && invoice.shippingAddress && (
+          {fields.shippingAddress.visible &&
+            invoice.showShippingAddress &&
+            invoice.shippingAddress && (
             <div
               className="mb-8 break-words overflow-hidden"
               style={{

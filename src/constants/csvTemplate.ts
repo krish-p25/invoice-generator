@@ -5,6 +5,7 @@ export const CSV_COLUMNS = [
   'bill to',
   'billing address',
   'shipping address',
+  'show shipping address',
   'item description',
   'item quantity',
   'item price',
@@ -31,6 +32,11 @@ export const CSV_COLUMN_MAPPINGS: CSVColumnMapping[] = [
   {
     csvHeader: 'shipping address',
     internalField: 'shippingAddress',
+    required: false,
+  },
+  {
+    csvHeader: 'show shipping address',
+    internalField: 'showShippingAddress',
     required: false,
   },
   {

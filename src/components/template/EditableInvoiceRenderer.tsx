@@ -175,7 +175,9 @@ export const EditableInvoiceRenderer: React.FC<EditableInvoiceRendererProps> = (
       )}
 
       {/* Shipping Address */}
-      {fields.shippingAddress.visible && invoice.shippingAddress && (
+      {fields.shippingAddress.visible &&
+        invoice.showShippingAddress &&
+        invoice.shippingAddress && (
         <DraggableField
           id="field-shippingAddress"
           fieldType="shippingAddress"

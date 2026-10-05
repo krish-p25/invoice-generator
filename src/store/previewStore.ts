@@ -26,6 +26,7 @@ interface PreviewInvoiceState {
   toggleDiscount: () => void;
   updateShippingFee: (value: number) => void;
   toggleShipping: () => void;
+  toggleShippingAddress: () => void;
   recalculateTotals: () => void;
   resetToSample: () => void;
 }
@@ -464,6 +465,16 @@ export const usePreviewStore = create<PreviewInvoiceState>()(
           };
         }),
 
+      // Unlike toggleShipping, this needs no totals recalculation: the address
+      // block is presentational and never contributes to the grand total.
+      toggleShippingAddress: () =>
+        set((state) => ({
+          previewInvoice: {
+            ...state.previewInvoice,
+            showShippingAddress: !state.previewInvoice.showShippingAddress,
+          },
+        })),
+
       recalculateTotals: () =>
         set((state) => {
           const totals = calculateInvoiceTotals(
@@ -492,6 +503,20 @@ export const usePreviewStore = create<PreviewInvoiceState>()(
     }),
     {
       name: 'preview-invoice-storage',
+      version: 1,
+      migrate: (persistedState: any) => {
+        // Invoices saved before showShippingAddress existed have it undefined,
+        // which would read as falsy and silently hide an address the user had
+        // already filled in. Derive it from the data instead.
+        if (
+          persistedState?.previewInvoice &&
+          typeof persistedState.previewInvoice.showShippingAddress !== 'boolean'
+        ) {
+          persistedState.previewInvoice.showShippingAddress =
+            (persistedState.previewInvoice.shippingAddress || '').trim() !== '';
+        }
+        return persistedState;
+      },
     }
   )
 );

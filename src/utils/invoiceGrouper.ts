@@ -2,6 +2,29 @@ import { v4 as uuidv4 } from 'uuid';
 import { CSVRow, Invoice } from '../types';
 import { format } from 'date-fns';
 
+const TRUTHY_FLAGS = ['yes', 'y', 'true', '1', 'on', 'show'];
+const FALSY_FLAGS = ['no', 'n', 'false', '0', 'off', 'hide'];
+
+/**
+ * Coerces the optional "show shipping address" CSV value to a boolean.
+ *
+ * Blank or unrecognized values fall back to `derivedDefault` rather than
+ * erroring, so existing CSVs (which have no such column) keep their current
+ * behaviour: show the block when there is an address to show.
+ */
+export function resolveShowShippingAddress(
+  rawValue: string,
+  shippingAddress: string
+): boolean {
+  const derivedDefault = shippingAddress.trim() !== '';
+  const normalized = rawValue.trim().toLowerCase();
+
+  if (TRUTHY_FLAGS.includes(normalized)) return true;
+  if (FALSY_FLAGS.includes(normalized)) return false;
+
+  return derivedDefault;
+}
+
 export function groupCSVRowsToInvoices(rows: CSVRow[]): Invoice[] {
   const invoiceMap = new Map<string, Invoice>();
   const customerVATMap = new Map<string, number>(); // Track VAT rate per customer
@@ -31,6 +54,10 @@ export function groupCSVRowsToInvoices(rows: CSVRow[]): Invoice[] {
         },
         billingAddress: row.billingAddress,
         shippingAddress: row.shippingAddress,
+        showShippingAddress: resolveShowShippingAddress(
+          row.showShippingAddress,
+          row.shippingAddress
+        ),
         lineItems: [],
         notes: row.invoiceNotes,
         currency: 'USD',
