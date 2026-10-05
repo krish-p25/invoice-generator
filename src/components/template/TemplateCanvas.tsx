@@ -350,6 +350,7 @@ export const TemplateCanvas: React.FC = () => {
             selectedField={null}
             onFieldSelect={() => {}}
             disableScaling={true}
+            isExport
           />
         </div>
       </div>

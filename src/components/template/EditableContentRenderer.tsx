@@ -22,6 +22,16 @@ interface EditableContentRendererProps {
   onFieldSelect: (fieldType: FieldType) => void;
   disableScaling?: boolean;
   snapGuides?: SnapGuides;
+  /**
+   * This instance is the hidden one html2canvas rasterises into the PDF, so it
+   * must draw final output only: no layout scaffolding, no editing affordances.
+   *
+   * It exists because `isEditMode` conflates two unrelated things — "the user
+   * is arranging fields" and "this instance is not interactive". The export
+   * instance only wants the latter, and without this flag it inherits the
+   * former's placeholders into the downloaded PDF.
+   */
+  isExport?: boolean;
 }
 
 export const EditableContentRenderer: React.FC<EditableContentRendererProps> = ({
@@ -30,6 +40,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
   onFieldSelect,
   disableScaling = false,
   snapGuides,
+  isExport = false,
 }) => {
   const [hoveredRowId, setHoveredRowId] = React.useState<string | null>(null);
   const [isLogoHovered, setIsLogoHovered] = React.useState(false);
@@ -45,6 +56,11 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
   const { globalStyles, fields, logo, lineItemColumns } = config;
   const amountHeading =
     lineItemColumns.showQuantity || lineItemColumns.showUnitPrice ? 'Total' : 'Amount';
+  // With no logo uploaded, the block falls back to a dashed placeholder box.
+  // That is a useful target in the editor but must never reach the PDF, so the
+  // export instance skips the block entirely and leaves the space empty —
+  // matching the `fields.logo.visible && logo.dataUrl` guard in InvoiceRenderer.
+  const showLogoBlock = fields.logo.visible && (!!logo.dataUrl || !isExport);
   const {
     previewInvoice,
     updateBillFrom,
@@ -314,7 +330,7 @@ export const EditableContentRenderer: React.FC<EditableContentRendererProps> = (
       )}
 
       {/* Logo */}
-      {fields.logo.visible && (
+      {showLogoBlock && (
         <DraggableField
           id="field-logo"
           fieldType="logo"
